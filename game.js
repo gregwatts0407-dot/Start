@@ -648,8 +648,11 @@
 
     if (!t) {
       ui.details.innerHTML = state.selectedType
-        ? `<p class="muted">Placing <strong>${TOWER_TYPES[state.selectedType].name}</strong>. Click a grass tile, or press Esc to cancel.</p>`
-        : '<p class="muted">No tower selected. Click a tower on the map to upgrade or sell it.</p>';
+        ? `<p class="muted">Placing <strong>${TOWER_TYPES[state.selectedType].name}</strong>.
+            <span class="mouse-only">Click a grass tile, or press Esc to cancel.</span>
+            <span class="touch-only">Tap a grass tile to preview its range, then tap the same tile again to build.</span></p>
+           <div class="actions"><button data-act="cancel">Cancel</button></div>`
+        : '<p class="muted">No tower selected. Tap a tower on the map to upgrade or sell it.</p>';
       return;
     }
 
@@ -683,9 +686,16 @@
 
   ui.details.addEventListener('click', (ev) => {
     const btn = ev.target.closest('button[data-act]');
-    const t = state.selectedTower;
-    if (!btn || !t || state.over) return;
+    if (!btn || state.over) return;
     const act = btn.dataset.act;
+    if (act === 'cancel') {
+      state.selectedType = null;
+      state.hover = null;
+      renderUI();
+      return;
+    }
+    const t = state.selectedTower;
+    if (!t) return;
     if (act === 'sell') sell(t);
     else upgrade(t, act);
     renderUI();
@@ -713,28 +723,51 @@
     return { c: Math.floor(x / TILE), r: Math.floor(y / TILE) };
   }
 
-  canvas.addEventListener('mousemove', (ev) => { state.hover = eventToTile(ev); });
-  canvas.addEventListener('mouseleave', () => { state.hover = null; });
+  // Touch screens have no hover, so a tap previews a tile (range + validity)
+  // and a second tap on the same tile builds there.
+  let lastPointer = 'mouse';
+  canvas.addEventListener('pointerdown', (ev) => { lastPointer = ev.pointerType || 'mouse'; });
+  window.addEventListener('pointerdown', (ev) => {
+    document.body.classList.toggle('touch', ev.pointerType === 'touch' || ev.pointerType === 'pen');
+  }, true);
+  canvas.addEventListener('pointermove', (ev) => {
+    if (ev.pointerType === 'mouse') state.hover = eventToTile(ev);
+  });
+  canvas.addEventListener('pointerleave', (ev) => {
+    if (ev.pointerType === 'mouse') state.hover = null;
+  });
 
   canvas.addEventListener('click', (ev) => {
     if (state.over) return;
-    const { c, r } = eventToTile(ev);
+    const touch = lastPointer !== 'mouse';
+    const tile = eventToTile(ev);
+    const { c, r } = tile;
     const existing = state.towers.find((t) => t.c === c && t.r === r);
     if (existing) {
       state.selectedTower = existing;
       state.selectedType = null;
+      if (touch) state.hover = null;
     } else if (state.selectedType) {
-      const placed = placeTower(state.selectedType, c, r);
-      // Keep the type selected while the player can afford another one.
-      if (placed && state.gold < TOWER_TYPES[state.selectedType].cost) state.selectedType = null;
+      const previewed = state.hover && state.hover.c === c && state.hover.r === r;
+      if (touch && !previewed) {
+        state.hover = tile;
+      } else {
+        const placed = placeTower(state.selectedType, c, r);
+        if (placed && touch) state.hover = null;
+        // Keep the type selected while the player can afford another one.
+        if (placed && state.gold < TOWER_TYPES[state.selectedType].cost) state.selectedType = null;
+      }
     } else {
       state.selectedTower = null;
+      if (touch) state.hover = null;
     }
     renderUI();
   });
 
   canvas.addEventListener('contextmenu', (ev) => {
     ev.preventDefault();
+    // A long press on touch screens also fires this; only right-click cancels.
+    if (lastPointer !== 'mouse') return;
     state.selectedType = null;
     state.selectedTower = null;
     renderUI();

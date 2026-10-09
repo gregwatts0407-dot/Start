@@ -147,7 +147,45 @@ kbd {
 .overlay-card p { color: var(--muted); margin: 0 0 18px; }
 
 @media (max-width: 900px) {
-  .layout { flex-direction: column; }
-  .panel { flex: none; width: 100%; }
+  .layout { flex-direction: column; align-items: stretch; }
+  .board, .panel { flex: none; width: 100%; }
   .controls { margin-left: 0; }
+}
+
+/* Touch support */
+.touch-only { display: none; }
+@media (hover: none) and (pointer: coarse) {
+  .touch-only { display: block; }
+  span.touch-only { display: inline; }
+  .mouse-only { display: none; }
+}
+/* Set from script on the first touch, for devices the media query misses. */
+body.touch .touch-only { display: block; }
+body.touch span.touch-only { display: inline; }
+body.touch .mouse-only { display: none; }
+
+button, canvas { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+button { min-height: 40px; }
+.board, .panel { -webkit-user-select: none; user-select: none; }
+
+@media (max-width: 600px) {
+  .layout { padding-block: 12px; gap: 12px; }
+  .hud { gap: 14px; padding: 8px 10px; }
+  .stat { min-width: 0; }
+  .stat .value { font-size: 19px; }
+  .controls { width: 100%; }
+  .controls #startWave { flex: 1; }
+  .hint { margin: 8px 0 0; }
+  .panel { padding: 12px; }
+  .shop { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .shop-item {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: 2px;
+    padding: 6px 2px;
+  }
+  .shop-item .meta, .shop-item kbd, .shop-item br { display: none; }
+  .shop-item .swatch { width: 24px; height: 24px; }
+  .shop-item .name { font-size: 13px; }
 }
