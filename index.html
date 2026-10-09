@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tower Defense</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="layout">
+    <section class="board">
+      <header class="hud">
+        <div class="stat"><span class="label">Lives</span><span id="lives" class="value lives">20</span></div>
+        <div class="stat"><span class="label">Gold</span><span id="gold" class="value gold">0</span></div>
+        <div class="stat"><span class="label">Wave</span><span id="wave" class="value">0 / 15</span></div>
+        <div class="controls">
+          <button id="startWave" class="primary">Start Wave 1</button>
+          <button id="speed" title="Toggle game speed">1x</button>
+          <button id="pause" title="Pause (P)">Pause</button>
+        </div>
+      </header>
+      <div class="canvas-wrap">
+        <canvas id="game" width="800" height="480"></canvas>
+        <div id="overlay" class="overlay hidden">
+          <div class="overlay-card">
+            <h1 id="overlayTitle">Game Over</h1>
+            <p id="overlayText"></p>
+            <button id="restart" class="primary">Play Again</button>
+          </div>
+        </div>
+      </div>
+      <p class="hint">Choose a tower, then click a grass tile to build. Click a tower to upgrade or sell it.
+        Keys: <kbd>1</kbd>–<kbd>4</kbd> pick a tower, <kbd>Esc</kbd> cancel, <kbd>Space</kbd> start wave, <kbd>P</kbd> pause.</p>
+    </section>
+
+    <aside class="panel">
+      <h2>Towers</h2>
+      <div id="shop" class="shop"></div>
+
+      <h2>Selected</h2>
+      <div id="details" class="details">
+        <p class="muted">No tower selected.</p>
+      </div>
+    </aside>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
