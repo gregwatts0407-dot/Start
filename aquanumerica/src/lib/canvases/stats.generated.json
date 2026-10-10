@@ -1,0 +1,47 @@
+{
+  "alpine-dawn": {
+    "regions": 56
+  },
+  "wild-poppies": {
+    "regions": 59
+  },
+  "pears-on-linen": {
+    "regions": 29
+  },
+  "ripple-bands": {
+    "regions": 25
+  },
+  "lavender-fields": {
+    "regions": 81
+  },
+  "peony-bloom": {
+    "regions": 77
+  },
+  "koi-pond": {
+    "regions": 65
+  },
+  "little-fox": {
+    "regions": 68
+  },
+  "lemon-tea": {
+    "regions": 88
+  },
+  "shards-of-spring": {
+    "regions": 63
+  },
+  "sunflower-trio": {
+    "regions": 106
+  },
+  "harbour-dusk": {
+    "regions": 91
+  },
+  "hummingbird": {
+    "regions": 76
+  },
+  "autumn-birches": {
+    "regions": 159
+  },
+  "tidal-mandala": {
+    "regions": 141
+  }
+}

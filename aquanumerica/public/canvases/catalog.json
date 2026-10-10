@@ -1,0 +1,1037 @@
+[
+  {
+    "id": "alpine-dawn",
+    "title": "Alpine Dawn",
+    "description": "First light warms snow-capped peaks above a still mountain lake.",
+    "category": "landscape",
+    "difficulty": "easy",
+    "width": 1200,
+    "height": 800,
+    "regions": 56,
+    "palette": [
+      {
+        "number": 1,
+        "name": "Lilac Sky",
+        "hex": "#cdc4e0"
+      },
+      {
+        "number": 2,
+        "name": "Dawn Blush",
+        "hex": "#f2cfc6"
+      },
+      {
+        "number": 3,
+        "name": "Apricot Glow",
+        "hex": "#f7dfbd"
+      },
+      {
+        "number": 4,
+        "name": "Sun Gold",
+        "hex": "#f4c066"
+      },
+      {
+        "number": 5,
+        "name": "Distant Blue",
+        "hex": "#a6b8d0"
+      },
+      {
+        "number": 6,
+        "name": "Snow",
+        "hex": "#f5f3f0"
+      },
+      {
+        "number": 7,
+        "name": "Slate Violet",
+        "hex": "#7889aa"
+      },
+      {
+        "number": 8,
+        "name": "Spruce",
+        "hex": "#3e5d5a"
+      },
+      {
+        "number": 9,
+        "name": "Lake Teal",
+        "hex": "#8cb5be"
+      },
+      {
+        "number": 10,
+        "name": "Meadow",
+        "hex": "#9cb57c"
+      },
+      {
+        "number": 11,
+        "name": "Rose Slope",
+        "hex": "#c4afc2"
+      }
+    ],
+    "template": "/canvases/alpine-dawn.svg",
+    "colour": "/canvases/alpine-dawn-colour.svg"
+  },
+  {
+    "id": "wild-poppies",
+    "title": "Wild Poppies",
+    "description": "Scarlet poppies and cornflowers nod in a breezy summer meadow.",
+    "category": "floral",
+    "difficulty": "easy",
+    "width": 1200,
+    "height": 800,
+    "regions": 59,
+    "palette": [
+      {
+        "number": 1,
+        "name": "Summer Sky",
+        "hex": "#d3e3ee"
+      },
+      {
+        "number": 2,
+        "name": "Cloud",
+        "hex": "#f7f5f0"
+      },
+      {
+        "number": 3,
+        "name": "Meadow Haze",
+        "hex": "#c9d8ab"
+      },
+      {
+        "number": 4,
+        "name": "Grass",
+        "hex": "#92b06c"
+      },
+      {
+        "number": 5,
+        "name": "Deep Grass",
+        "hex": "#5f8250"
+      },
+      {
+        "number": 6,
+        "name": "Poppy Red",
+        "hex": "#dd4b3c"
+      },
+      {
+        "number": 7,
+        "name": "Poppy Shade",
+        "hex": "#a63530"
+      },
+      {
+        "number": 8,
+        "name": "Poppy Heart",
+        "hex": "#322c2d"
+      },
+      {
+        "number": 9,
+        "name": "Cornflower",
+        "hex": "#7290d0"
+      }
+    ],
+    "template": "/canvases/wild-poppies.svg",
+    "colour": "/canvases/wild-poppies-colour.svg"
+  },
+  {
+    "id": "pears-on-linen",
+    "title": "Pears on Linen",
+    "description": "Three ripe pears rest on a soft linen cloth in quiet morning light.",
+    "category": "still-life",
+    "difficulty": "easy",
+    "width": 1200,
+    "height": 900,
+    "regions": 29,
+    "palette": [
+      {
+        "number": 1,
+        "name": "Wall Sage",
+        "hex": "#dfe3d3"
+      },
+      {
+        "number": 2,
+        "name": "Wall Shadow",
+        "hex": "#c3c9b6"
+      },
+      {
+        "number": 3,
+        "name": "Linen",
+        "hex": "#f1ebdf"
+      },
+      {
+        "number": 4,
+        "name": "Linen Fold",
+        "hex": "#d9cfbd"
+      },
+      {
+        "number": 5,
+        "name": "Pear Green",
+        "hex": "#b9c66a"
+      },
+      {
+        "number": 6,
+        "name": "Pear Blush",
+        "hex": "#e09a62"
+      },
+      {
+        "number": 7,
+        "name": "Pear Shadow",
+        "hex": "#8a9a48"
+      },
+      {
+        "number": 8,
+        "name": "Stem Brown",
+        "hex": "#6d5440"
+      },
+      {
+        "number": 9,
+        "name": "Cast Shadow",
+        "hex": "#a9aec4"
+      }
+    ],
+    "template": "/canvases/pears-on-linen.svg",
+    "colour": "/canvases/pears-on-linen-colour.svg"
+  },
+  {
+    "id": "ripple-bands",
+    "title": "Ripple Bands",
+    "description": "Flowing bands of sea and sand, interrupted by a warm sun and a cool moon.",
+    "category": "abstract",
+    "difficulty": "easy",
+    "width": 1200,
+    "height": 800,
+    "regions": 25,
+    "palette": [
+      {
+        "number": 1,
+        "name": "Mist",
+        "hex": "#e6eef1"
+      },
+      {
+        "number": 2,
+        "name": "Aqua",
+        "hex": "#a9d3d0"
+      },
+      {
+        "number": 3,
+        "name": "Teal",
+        "hex": "#5fa3a3"
+      },
+      {
+        "number": 4,
+        "name": "Deep Teal",
+        "hex": "#2f6f7a"
+      },
+      {
+        "number": 5,
+        "name": "Sand",
+        "hex": "#f1dcb5"
+      },
+      {
+        "number": 6,
+        "name": "Coral",
+        "hex": "#ef9a7a"
+      },
+      {
+        "number": 7,
+        "name": "Rose",
+        "hex": "#d36b6b"
+      },
+      {
+        "number": 8,
+        "name": "Plum",
+        "hex": "#7c4a6b"
+      }
+    ],
+    "template": "/canvases/ripple-bands.svg",
+    "colour": "/canvases/ripple-bands-colour.svg"
+  },
+  {
+    "id": "lavender-fields",
+    "title": "Lavender Fields",
+    "description": "Provençal rows of lavender lead to a stone farmhouse and its cypress sentinels.",
+    "category": "landscape",
+    "difficulty": "medium",
+    "width": 1200,
+    "height": 800,
+    "regions": 81,
+    "palette": [
+      {
+        "number": 1,
+        "name": "Morning Sky",
+        "hex": "#cfe1ef"
+      },
+      {
+        "number": 2,
+        "name": "Horizon Glow",
+        "hex": "#f4e6d4"
+      },
+      {
+        "number": 3,
+        "name": "Cloud White",
+        "hex": "#f8f6f2"
+      },
+      {
+        "number": 4,
+        "name": "Far Hills",
+        "hex": "#b3c2cb"
+      },
+      {
+        "number": 5,
+        "name": "Olive Grove",
+        "hex": "#8b9c6b"
+      },
+      {
+        "number": 6,
+        "name": "Cypress",
+        "hex": "#3f5c48"
+      },
+      {
+        "number": 7,
+        "name": "Lavender",
+        "hex": "#a493cc"
+      },
+      {
+        "number": 8,
+        "name": "Deep Violet",
+        "hex": "#6b5b99"
+      },
+      {
+        "number": 9,
+        "name": "Warm Earth",
+        "hex": "#a38a68"
+      },
+      {
+        "number": 10,
+        "name": "Limestone",
+        "hex": "#ebdecb"
+      },
+      {
+        "number": 11,
+        "name": "Terracotta",
+        "hex": "#c87a5c"
+      },
+      {
+        "number": 12,
+        "name": "Sun Haze",
+        "hex": "#f6d796"
+      }
+    ],
+    "template": "/canvases/lavender-fields.svg",
+    "colour": "/canvases/lavender-fields-colour.svg"
+  },
+  {
+    "id": "peony-bloom",
+    "title": "Peony Bloom",
+    "description": "A lavish garden peony unfurls its blush petals among soft green leaves.",
+    "category": "floral",
+    "difficulty": "medium",
+    "width": 1000,
+    "height": 1000,
+    "regions": 77,
+    "palette": [
+      {
+        "number": 1,
+        "name": "Cream Ground",
+        "hex": "#f6ede0"
+      },
+      {
+        "number": 2,
+        "name": "Sage Wash",
+        "hex": "#cdd9c3"
+      },
+      {
+        "number": 3,
+        "name": "Petal Blush",
+        "hex": "#f7cdd2"
+      },
+      {
+        "number": 4,
+        "name": "Rose",
+        "hex": "#ee9fae"
+      },
+      {
+        "number": 5,
+        "name": "Deep Rose",
+        "hex": "#cd6680"
+      },
+      {
+        "number": 6,
+        "name": "Raspberry",
+        "hex": "#a03f60"
+      },
+      {
+        "number": 7,
+        "name": "Stamen Gold",
+        "hex": "#f1c766"
+      },
+      {
+        "number": 8,
+        "name": "Leaf",
+        "hex": "#82a66d"
+      },
+      {
+        "number": 9,
+        "name": "Deep Leaf",
+        "hex": "#4f7556"
+      },
+      {
+        "number": 10,
+        "name": "Bud Green",
+        "hex": "#a9c48a"
+      },
+      {
+        "number": 11,
+        "name": "Lilac Mist",
+        "hex": "#d8cde7"
+      }
+    ],
+    "template": "/canvases/peony-bloom.svg",
+    "colour": "/canvases/peony-bloom-colour.svg"
+  },
+  {
+    "id": "koi-pond",
+    "title": "Koi Pond",
+    "description": "Koi glide between lily pads and a single lotus in a cool, rippling pond.",
+    "category": "animal",
+    "difficulty": "medium",
+    "width": 1000,
+    "height": 1000,
+    "regions": 65,
+    "palette": [
+      {
+        "number": 1,
+        "name": "Deep Water",
+        "hex": "#3e6c7a"
+      },
+      {
+        "number": 2,
+        "name": "Mid Water",
+        "hex": "#5d92a0"
+      },
+      {
+        "number": 3,
+        "name": "Light Ripple",
+        "hex": "#9fc8cc"
+      },
+      {
+        "number": 4,
+        "name": "Lily Pad",
+        "hex": "#78a35f"
+      },
+      {
+        "number": 5,
+        "name": "Pad Shadow",
+        "hex": "#4f7748"
+      },
+      {
+        "number": 6,
+        "name": "Koi Orange",
+        "hex": "#ef8c3d"
+      },
+      {
+        "number": 7,
+        "name": "Koi Pearl",
+        "hex": "#f7f2e9"
+      },
+      {
+        "number": 8,
+        "name": "Koi Crimson",
+        "hex": "#c84a3c"
+      },
+      {
+        "number": 9,
+        "name": "Lotus Pink",
+        "hex": "#f3b9c8"
+      },
+      {
+        "number": 10,
+        "name": "Lotus Gold",
+        "hex": "#f4d46c"
+      },
+      {
+        "number": 11,
+        "name": "Sunlit Water",
+        "hex": "#c9e2df"
+      }
+    ],
+    "template": "/canvases/koi-pond.svg",
+    "colour": "/canvases/koi-pond-colour.svg"
+  },
+  {
+    "id": "little-fox",
+    "title": "Little Fox",
+    "description": "A faceted fox sits beneath a rising moon at the edge of a pine wood.",
+    "category": "animal",
+    "difficulty": "medium",
+    "width": 1000,
+    "height": 1000,
+    "regions": 68,
+    "palette": [
+      {
+        "number": 1,
+        "name": "Night Blue",
+        "hex": "#3d4a6e"
+      },
+      {
+        "number": 2,
+        "name": "Twilight Violet",
+        "hex": "#6d6a9a"
+      },
+      {
+        "number": 3,
+        "name": "Dusk Rose",
+        "hex": "#d9a3a8"
+      },
+      {
+        "number": 4,
+        "name": "Moon Cream",
+        "hex": "#f6ecd2"
+      },
+      {
+        "number": 5,
+        "name": "Pine",
+        "hex": "#2f4a49"
+      },
+      {
+        "number": 6,
+        "name": "Fox Orange",
+        "hex": "#e0803f"
+      },
+      {
+        "number": 7,
+        "name": "Fox Rust",
+        "hex": "#b65a2e"
+      },
+      {
+        "number": 8,
+        "name": "Fox Cream",
+        "hex": "#f3e3cc"
+      },
+      {
+        "number": 9,
+        "name": "Charcoal",
+        "hex": "#3a3335"
+      },
+      {
+        "number": 10,
+        "name": "Meadow",
+        "hex": "#7d8f5c"
+      },
+      {
+        "number": 11,
+        "name": "Grass Light",
+        "hex": "#a9b77a"
+      }
+    ],
+    "template": "/canvases/little-fox.svg",
+    "colour": "/canvases/little-fox-colour.svg"
+  },
+  {
+    "id": "lemon-tea",
+    "title": "Lemon Tea",
+    "description": "A teal teapot, a porcelain cup and sunny lemons on a striped tablecloth.",
+    "category": "still-life",
+    "difficulty": "medium",
+    "width": 1200,
+    "height": 900,
+    "regions": 88,
+    "palette": [
+      {
+        "number": 1,
+        "name": "Wall Cream",
+        "hex": "#f3ead9"
+      },
+      {
+        "number": 2,
+        "name": "Wall Shade",
+        "hex": "#dccfb8"
+      },
+      {
+        "number": 3,
+        "name": "Cloth Blue",
+        "hex": "#9fb7d1"
+      },
+      {
+        "number": 4,
+        "name": "Cloth Stripe",
+        "hex": "#f5f1e8"
+      },
+      {
+        "number": 5,
+        "name": "Teapot Teal",
+        "hex": "#5e9aa3"
+      },
+      {
+        "number": 6,
+        "name": "Teapot Shade",
+        "hex": "#3f6f7a"
+      },
+      {
+        "number": 7,
+        "name": "Lemon",
+        "hex": "#f4d24e"
+      },
+      {
+        "number": 8,
+        "name": "Lemon Shade",
+        "hex": "#d9a93a"
+      },
+      {
+        "number": 9,
+        "name": "Pith",
+        "hex": "#f8efc8"
+      },
+      {
+        "number": 10,
+        "name": "Leaf Green",
+        "hex": "#6f9a55"
+      },
+      {
+        "number": 11,
+        "name": "Porcelain",
+        "hex": "#f7f4ef"
+      },
+      {
+        "number": 12,
+        "name": "Cast Shadow",
+        "hex": "#a6a9b8"
+      }
+    ],
+    "template": "/canvases/lemon-tea.svg",
+    "colour": "/canvases/lemon-tea-colour.svg"
+  },
+  {
+    "id": "shards-of-spring",
+    "title": "Shards of Spring",
+    "description": "A stained-glass mosaic of blossom pinks, butter yellows and fresh greens.",
+    "category": "abstract",
+    "difficulty": "medium",
+    "width": 1200,
+    "height": 900,
+    "regions": 63,
+    "palette": [
+      {
+        "number": 1,
+        "name": "Petal Pink",
+        "hex": "#f4c2c9"
+      },
+      {
+        "number": 2,
+        "name": "Blossom",
+        "hex": "#e98fa3"
+      },
+      {
+        "number": 3,
+        "name": "Lilac",
+        "hex": "#c4b3de"
+      },
+      {
+        "number": 4,
+        "name": "Butter",
+        "hex": "#f6e3a1"
+      },
+      {
+        "number": 5,
+        "name": "Sunlit",
+        "hex": "#f2c66d"
+      },
+      {
+        "number": 6,
+        "name": "Fresh Green",
+        "hex": "#b5d18c"
+      },
+      {
+        "number": 7,
+        "name": "Leaf",
+        "hex": "#7fae6a"
+      },
+      {
+        "number": 8,
+        "name": "Teal Mist",
+        "hex": "#a4d1cb"
+      },
+      {
+        "number": 9,
+        "name": "Sky",
+        "hex": "#b9d3ec"
+      },
+      {
+        "number": 10,
+        "name": "Cream",
+        "hex": "#f8f3e7"
+      }
+    ],
+    "template": "/canvases/shards-of-spring.svg",
+    "colour": "/canvases/shards-of-spring-colour.svg"
+  },
+  {
+    "id": "sunflower-trio",
+    "title": "Sunflower Trio",
+    "description": "Three sunflowers turn their golden faces to a high summer sky.",
+    "category": "floral",
+    "difficulty": "medium",
+    "width": 1000,
+    "height": 1000,
+    "regions": 106,
+    "palette": [
+      {
+        "number": 1,
+        "name": "Summer Sky",
+        "hex": "#bcd9ee"
+      },
+      {
+        "number": 2,
+        "name": "Cloud",
+        "hex": "#f6f4ef"
+      },
+      {
+        "number": 3,
+        "name": "Sun Yellow",
+        "hex": "#f6c445"
+      },
+      {
+        "number": 4,
+        "name": "Marigold",
+        "hex": "#e8992f"
+      },
+      {
+        "number": 5,
+        "name": "Seed Brown",
+        "hex": "#74502f"
+      },
+      {
+        "number": 6,
+        "name": "Seed Dark",
+        "hex": "#3f2d22"
+      },
+      {
+        "number": 7,
+        "name": "Stem Green",
+        "hex": "#6f9b50"
+      },
+      {
+        "number": 8,
+        "name": "Leaf Shade",
+        "hex": "#4d7a45"
+      },
+      {
+        "number": 9,
+        "name": "Field",
+        "hex": "#a9c47e"
+      },
+      {
+        "number": 10,
+        "name": "Distant Hills",
+        "hex": "#8fb0b8"
+      }
+    ],
+    "template": "/canvases/sunflower-trio.svg",
+    "colour": "/canvases/sunflower-trio-colour.svg"
+  },
+  {
+    "id": "harbour-dusk",
+    "title": "Harbour at Dusk",
+    "description": "Sailboats drift home beneath a lighthouse as the evening sky turns to rose and amber.",
+    "category": "landscape",
+    "difficulty": "hard",
+    "width": 1200,
+    "height": 800,
+    "regions": 91,
+    "palette": [
+      {
+        "number": 1,
+        "name": "Twilight",
+        "hex": "#8f91bb"
+      },
+      {
+        "number": 2,
+        "name": "Dusk Rose",
+        "hex": "#e7b3a8"
+      },
+      {
+        "number": 3,
+        "name": "Amber Glow",
+        "hex": "#f2c98d"
+      },
+      {
+        "number": 4,
+        "name": "Deep Indigo",
+        "hex": "#434d78"
+      },
+      {
+        "number": 5,
+        "name": "Sea Slate",
+        "hex": "#5d7c9d"
+      },
+      {
+        "number": 6,
+        "name": "Sea Light",
+        "hex": "#a7bfd2"
+      },
+      {
+        "number": 7,
+        "name": "Cliff Umber",
+        "hex": "#8b6c56"
+      },
+      {
+        "number": 8,
+        "name": "Cliff Shadow",
+        "hex": "#5c4b45"
+      },
+      {
+        "number": 9,
+        "name": "Lighthouse White",
+        "hex": "#f3f0ea"
+      },
+      {
+        "number": 10,
+        "name": "Signal Red",
+        "hex": "#c3524e"
+      },
+      {
+        "number": 11,
+        "name": "Sail Cream",
+        "hex": "#efe2c6"
+      },
+      {
+        "number": 12,
+        "name": "Boat Navy",
+        "hex": "#2f3a56"
+      },
+      {
+        "number": 13,
+        "name": "Grass Sage",
+        "hex": "#93a47b"
+      },
+      {
+        "number": 14,
+        "name": "Lamp Gold",
+        "hex": "#f6d77b"
+      }
+    ],
+    "template": "/canvases/harbour-dusk.svg",
+    "colour": "/canvases/harbour-dusk-colour.svg"
+  },
+  {
+    "id": "hummingbird",
+    "title": "Hummingbird",
+    "description": "A ruby-throated hummingbird hovers to sip from hanging fuchsia blossoms.",
+    "category": "animal",
+    "difficulty": "hard",
+    "width": 1000,
+    "height": 1000,
+    "regions": 76,
+    "palette": [
+      {
+        "number": 1,
+        "name": "Soft Ground",
+        "hex": "#eef1e6"
+      },
+      {
+        "number": 2,
+        "name": "Bokeh Green",
+        "hex": "#c5d8b5"
+      },
+      {
+        "number": 3,
+        "name": "Bokeh Teal",
+        "hex": "#a9cfc9"
+      },
+      {
+        "number": 4,
+        "name": "Leaf",
+        "hex": "#6f9a5c"
+      },
+      {
+        "number": 5,
+        "name": "Deep Leaf",
+        "hex": "#456b4b"
+      },
+      {
+        "number": 6,
+        "name": "Fuchsia",
+        "hex": "#d24f86"
+      },
+      {
+        "number": 7,
+        "name": "Magenta Deep",
+        "hex": "#9c2f62"
+      },
+      {
+        "number": 8,
+        "name": "Petal Violet",
+        "hex": "#7d5aa6"
+      },
+      {
+        "number": 9,
+        "name": "Emerald",
+        "hex": "#3f8f6b"
+      },
+      {
+        "number": 10,
+        "name": "Jade Light",
+        "hex": "#8cc39a"
+      },
+      {
+        "number": 11,
+        "name": "Ruby Throat",
+        "hex": "#c43a4a"
+      },
+      {
+        "number": 12,
+        "name": "Belly Pearl",
+        "hex": "#efe9df"
+      },
+      {
+        "number": 13,
+        "name": "Beak Charcoal",
+        "hex": "#34302f"
+      }
+    ],
+    "template": "/canvases/hummingbird.svg",
+    "colour": "/canvases/hummingbird-colour.svg"
+  },
+  {
+    "id": "autumn-birches",
+    "title": "Autumn Birches",
+    "description": "Silver birches glow among russet and gold foliage beside a woodland path.",
+    "category": "landscape",
+    "difficulty": "hard",
+    "width": 900,
+    "height": 1200,
+    "regions": 159,
+    "palette": [
+      {
+        "number": 1,
+        "name": "Morning Mist",
+        "hex": "#e8ebe4"
+      },
+      {
+        "number": 2,
+        "name": "Far Trees",
+        "hex": "#b8bfae"
+      },
+      {
+        "number": 3,
+        "name": "Gold Leaf",
+        "hex": "#f0c45c"
+      },
+      {
+        "number": 4,
+        "name": "Ochre",
+        "hex": "#df9a46"
+      },
+      {
+        "number": 5,
+        "name": "Russet",
+        "hex": "#bf603b"
+      },
+      {
+        "number": 6,
+        "name": "Burgundy",
+        "hex": "#8c3a3e"
+      },
+      {
+        "number": 7,
+        "name": "Birch White",
+        "hex": "#f4f1eb"
+      },
+      {
+        "number": 8,
+        "name": "Bark Charcoal",
+        "hex": "#39383b"
+      },
+      {
+        "number": 9,
+        "name": "Moss",
+        "hex": "#7f8b4f"
+      },
+      {
+        "number": 10,
+        "name": "Path Sand",
+        "hex": "#dcc6a0"
+      },
+      {
+        "number": 11,
+        "name": "Blue Shadow",
+        "hex": "#a2afc1"
+      },
+      {
+        "number": 12,
+        "name": "Forest Shade",
+        "hex": "#55603f"
+      }
+    ],
+    "template": "/canvases/autumn-birches.svg",
+    "colour": "/canvases/autumn-birches-colour.svg"
+  },
+  {
+    "id": "tidal-mandala",
+    "title": "Tidal Mandala",
+    "description": "Concentric rings of petals and pearls in sea-glass blues with coral accents.",
+    "category": "abstract",
+    "difficulty": "hard",
+    "width": 1000,
+    "height": 1000,
+    "regions": 141,
+    "palette": [
+      {
+        "number": 1,
+        "name": "Sea Foam",
+        "hex": "#e4f0ec"
+      },
+      {
+        "number": 2,
+        "name": "Aqua",
+        "hex": "#a6d5cf"
+      },
+      {
+        "number": 3,
+        "name": "Lagoon",
+        "hex": "#5fa7a8"
+      },
+      {
+        "number": 4,
+        "name": "Deep Sea",
+        "hex": "#2e6577"
+      },
+      {
+        "number": 5,
+        "name": "Navy Ink",
+        "hex": "#27405a"
+      },
+      {
+        "number": 6,
+        "name": "Sand",
+        "hex": "#efdcb8"
+      },
+      {
+        "number": 7,
+        "name": "Coral",
+        "hex": "#ec9478"
+      },
+      {
+        "number": 8,
+        "name": "Shell Pink",
+        "hex": "#f3c3bd"
+      },
+      {
+        "number": 9,
+        "name": "Sunset Gold",
+        "hex": "#f2c461"
+      },
+      {
+        "number": 10,
+        "name": "Kelp",
+        "hex": "#6f9b6e"
+      },
+      {
+        "number": 11,
+        "name": "Lilac",
+        "hex": "#b9a6d4"
+      },
+      {
+        "number": 12,
+        "name": "Pearl",
+        "hex": "#f8f4ec"
+      }
+    ],
+    "template": "/canvases/tidal-mandala.svg",
+    "colour": "/canvases/tidal-mandala-colour.svg"
+  }
+]

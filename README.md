@@ -20,3 +20,7 @@ Open `index.html` in a browser, or serve the folder (for example `python3 -m htt
 | Cannon | 100  | 90    | Slow, deals splash damage      |
 | Frost  | 80   | 95    | Slows creeps by 50%            |
 | Sniper | 150  | 230   | Long range, heavy hits         |
+
+## AquaNumerica
+
+The `aquanumerica/` folder holds a separate Next.js app: a watercolour paint-by-numbers studio with 15 numbered canvases, seven painting implements, strict region locking and a pigment simulation (wet-in-wet bleeding, granulation, pooled edges, textured paper). Progress saves in the browser, and finished paintings export as PNG or PDF. See [`aquanumerica/README.md`](aquanumerica/README.md) to run it.
