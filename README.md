@@ -20,3 +20,7 @@ Open `index.html` in a browser, or serve the folder (for example `python3 -m htt
 | Cannon | 100  | 90    | Slow, deals splash damage      |
 | Frost  | 80   | 95    | Slows creeps by 50%            |
 | Sniper | 150  | 230   | Long range, heavy hits         |
+
+## Cottage Garden Jigsaw
+
+The `jigsaw/` folder holds a separate game: a jigsaw puzzle of a cottage garden in late spring, from 48 up to 2,000 pieces, with assisted and unassisted play modes and automatic saving so you can close the browser and carry on later. Open `jigsaw/index.html` to play. See [`jigsaw/README.md`](jigsaw/README.md) for details.

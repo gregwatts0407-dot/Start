@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Cottage Garden Jigsaw</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;500;700&family=IM+Fell+English:ital@0;1&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <canvas id="table" aria-label="Puzzle table"></canvas>
+
+    <header id="hud" class="hud" hidden>
+      <button id="backBtn" class="hud-back" type="button" aria-label="Back to puzzles">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        <span>Puzzles</span>
+      </button>
+      <div class="hud-title">
+        <span class="hud-name">Cottage Garden</span>
+        <span id="hudSize" class="hud-sub">2000 pieces</span>
+      </div>
+      <div class="hud-progress" title="Pieces fitted to at least one neighbour or placed on the board">
+        <span id="hudCount" class="hud-count">0 / 0</span>
+        <span class="bar"><span id="hudBar" class="bar-fill"></span></span>
+      </div>
+      <div class="hud-time">
+        <span id="hudTimer" class="hud-timer">0:00</span>
+        <span id="hudSave" class="hud-save" data-state="saved">Saved</span>
+      </div>
+      <div class="segmented" role="group" aria-label="Play mode">
+        <button id="modeAssisted" type="button" aria-pressed="true">Assisted</button>
+        <button id="modeUnassisted" type="button" aria-pressed="false">Unassisted</button>
+      </div>
+    </header>
+
+    <nav id="tools" class="tools" hidden aria-label="Puzzle tools">
+      <button id="toolBox" class="tool" type="button" aria-pressed="false" title="Show the box lid (B)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.6"/></svg>
+        <span>Box lid</span>
+      </button>
+      <button id="toolGhost" class="tool" type="button" aria-pressed="false" title="Show a faint picture on the board (G)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5" stroke-dasharray="2.5 2.5"/><path d="M7 15l3-3 2 2 2-2 3 3"/></svg>
+        <span>Ghost</span>
+      </button>
+      <button id="toolEdges" class="tool" type="button" aria-pressed="false" title="Show only edge pieces (E)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 8h8v8H8z" stroke-dasharray="2 2"/></svg>
+        <span>Edges</span>
+      </button>
+      <button id="toolTidy" class="tool" type="button" title="Line up loose pieces round the board, edges innermost (T)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="5" height="5" rx="1"/><rect x="10" y="3" width="5" height="5" rx="1"/><rect x="17" y="3" width="4" height="5" rx="1"/><rect x="3" y="10" width="5" height="5" rx="1"/><rect x="3" y="17" width="5" height="4" rx="1"/><rect x="11" y="11" width="10" height="10" rx="1" stroke-dasharray="2 2"/></svg>
+        <span>Tidy</span>
+      </button>
+      <span class="tool-gap" aria-hidden="true"></span>
+      <button id="toolZoomOut" class="tool" type="button" title="Zoom out (−)" aria-label="Zoom out">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21M7.5 10.5h6"/></svg>
+        <span>Out</span>
+      </button>
+      <button id="toolFit" class="tool" type="button" title="Show the whole table (0)" aria-label="Show the whole table">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg>
+        <span>Fit</span>
+      </button>
+      <button id="toolZoomIn" class="tool" type="button" title="Zoom in (+)" aria-label="Zoom in">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21M7.5 10.5h6M10.5 7.5v6"/></svg>
+        <span>In</span>
+      </button>
+      <span class="tool-gap" aria-hidden="true"></span>
+      <button id="toolSound" class="tool" type="button" aria-pressed="true" title="Click sound when pieces fit">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="sound-wave" d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12"/></svg>
+        <span>Sound</span>
+      </button>
+    </nav>
+
+    <aside id="boxLid" class="box-lid" hidden aria-label="Box lid picture">
+      <canvas id="boxLidCanvas"></canvas>
+      <div class="box-lid-bar">
+        <button id="boxLidSize" type="button">Enlarge</button>
+        <button id="boxLidClose" type="button" aria-label="Close the box lid">Close</button>
+      </div>
+    </aside>
+
+    <section id="menu" class="menu" aria-labelledby="menuTitle">
+      <div class="menu-inner">
+        <figure class="lid">
+          <div class="lid-art">
+            <canvas id="lidCanvas" aria-label="The finished picture: a brick cottage with a green door at the end of a gravel path, between flower beds"></canvas>
+            <div id="lidPainting" class="lid-painting">
+              <span>Painting the garden</span>
+              <span class="bar"><span id="lidBar" class="bar-fill"></span></span>
+            </div>
+            <div class="lid-band">
+              <span class="lid-name">Cottage Garden in Late Spring</span>
+              <span id="lidCount" class="lid-count">2000</span>
+            </div>
+          </div>
+          <figcaption id="lidCaption" class="lid-caption">2,000 pieces · finished size 98 × 78 cm</figcaption>
+        </figure>
+
+        <div class="choices">
+          <p class="eyebrow">A jigsaw puzzle</p>
+          <h1 id="menuTitle">Cottage Garden in Late Spring</h1>
+          <p class="blurb">A gravel path runs through an open timber gate to a brick cottage with a green door. Lavender and delphiniums on the left give way to roses, poppies and yellow yarrow on the right, with a potting bench in the corner.</p>
+
+          <fieldset class="group">
+            <legend>Pieces</legend>
+            <div id="sizeList" class="size-list"></div>
+          </fieldset>
+
+          <fieldset class="group">
+            <legend>Play mode</legend>
+            <div class="mode-list">
+              <label class="choice mode-choice">
+                <input type="radio" name="mode" id="modeChoiceAssisted" value="assisted" checked>
+                <span class="choice-body">
+                  <span class="choice-title">Assisted</span>
+                  <span class="detail">Tap any piece and it glides into its place. You can still drag pieces yourself, and turn on a ghost image of the picture.</span>
+                </span>
+              </label>
+              <label class="choice mode-choice">
+                <input type="radio" name="mode" id="modeChoiceUnassisted" value="unassisted">
+                <span class="choice-body">
+                  <span class="choice-title">Unassisted</span>
+                  <span class="detail">No help. Drag pieces together and they lock when they fit, just like the real thing.</span>
+                </span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="actions">
+            <button id="startBtn" class="primary" type="button" disabled>Start puzzle</button>
+            <button id="restartBtn" class="secondary" type="button" hidden>Start over</button>
+          </div>
+          <div id="confirmRestart" class="confirm" hidden role="alertdialog" aria-labelledby="confirmText">
+            <p id="confirmText">Start this puzzle again? Your progress on it will be cleared.</p>
+            <div class="actions">
+              <button id="confirmYes" class="danger" type="button">Clear and start again</button>
+              <button id="confirmNo" class="secondary" type="button">Keep my progress</button>
+            </div>
+          </div>
+          <p id="storageNote" class="storage-note">Progress saves automatically in this browser, so you can close it and carry on later.</p>
+        </div>
+      </div>
+    </section>
+
+    <div id="loading" class="overlay" hidden>
+      <div class="card loading-card" role="status">
+        <p id="loadingText">Cutting pieces</p>
+        <span class="bar"><span id="loadingBar" class="bar-fill"></span></span>
+      </div>
+    </div>
+
+    <div id="finish" class="overlay" hidden>
+      <div class="card finish-card" role="dialog" aria-labelledby="finishTitle">
+        <p class="eyebrow">Puzzle complete</p>
+        <h2 id="finishTitle">The garden is finished</h2>
+        <p id="finishText"></p>
+        <p id="finishBest" class="muted"></p>
+        <div class="actions">
+          <button id="finishAdmire" class="secondary" type="button">Admire the picture</button>
+          <button id="finishMenu" class="primary" type="button">Choose another puzzle</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="scene.js"></script>
+  <script src="puzzle.js"></script>
+</body>
+</html>
