@@ -2,7 +2,7 @@ import type { GalleryImage } from "./images";
 import type { PieceOption } from "./difficulty";
 import type { PuzzleConfig, SaveRecord, StartMode } from "./puzzle/types";
 import { randomSeed } from "./puzzle/rng";
-import { newId, putSave, requestPersistence } from "./storage";
+import { newId, putSave, requestPersistence } from "@/lib/storage";
 
 /** Create a new (empty) save; the workspace lays out pieces on first load. */
 export async function createPuzzle(

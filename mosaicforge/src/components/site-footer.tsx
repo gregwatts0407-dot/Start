@@ -1,3 +1,5 @@
+import { ASSET_PREFIX } from "@/lib/env";
+
 export function SiteFooter() {
   return (
     <footer className="border-t">
@@ -5,7 +7,7 @@ export function SiteFooter() {
         <p>MosaicForge — progress is stored locally in your browser.</p>
         <p>
           Images: CC0, public-domain, Unsplash and CC BY-SA works.{" "}
-          <a href="/images/CREDITS.md" className="underline underline-offset-4 hover:text-foreground">
+          <a href={`${ASSET_PREFIX}images/CREDITS.md`} target="_blank" rel="noreferrer" className="underline underline-offset-4 hover:text-foreground">
             Credits
           </a>
         </p>

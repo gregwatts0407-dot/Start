@@ -4,12 +4,13 @@ import { useMemo } from "react";
 import { cutToSvg } from "@/lib/puzzle/geometry";
 import { ArrowDownIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ASSET_PREFIX } from "@/lib/env";
 
 const W = 600;
 const H = 400;
 const ROWS = 4;
 const COLS = 6;
-const IMG = "/images/thumbs/monument-valley.webp";
+const IMG = `${ASSET_PREFIX}images/thumbs/monument-valley.webp`;
 
 /** Pieces that "float" out of the hero puzzle: [row, col, dx, dy, rotateDeg]. */
 const LIFTED: Array<[number, number, number, number, number]> = [

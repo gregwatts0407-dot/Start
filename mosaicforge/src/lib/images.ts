@@ -5,6 +5,8 @@
  * (see /public/images/CREDITS.md).
  */
 
+import { ASSET_PREFIX } from "@/lib/env";
+
 export type Category =
   | "Landscapes"
   | "Nature"
@@ -81,8 +83,8 @@ export const GALLERY: GalleryImage[] = ENTRIES.map(([id, title, category, credit
   width,
   height,
   tint,
-  src: `/images/full/${id}.webp`,
-  thumb: `/images/thumbs/${id}.webp`,
+  src: `${ASSET_PREFIX}images/full/${id}.webp`,
+  thumb: `${ASSET_PREFIX}images/thumbs/${id}.webp`,
 }));
 
 export function getGalleryImage(id: string): GalleryImage | undefined {

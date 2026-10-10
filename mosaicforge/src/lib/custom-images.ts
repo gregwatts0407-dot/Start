@@ -4,7 +4,7 @@
  */
 import type { GalleryImage } from "./images";
 import { getGalleryImage } from "./images";
-import { getImage, newId, putImage, type StoredImage } from "./storage";
+import { getImage, newId, putImage, type StoredImage } from "@/lib/storage";
 
 const MAX_EDGE = 3600;
 const THUMB_EDGE = 720;

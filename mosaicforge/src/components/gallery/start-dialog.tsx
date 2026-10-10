@@ -26,6 +26,7 @@ import { createPuzzle } from "@/lib/create-puzzle";
 import type { SaveRecord, StartMode } from "@/lib/puzzle/types";
 import { usePrefs } from "@/store/prefs";
 import { cn } from "@/lib/utils";
+import { ImageViewer } from "@/components/puzzle/image-viewer";
 
 export function StartDialog({
   image,
@@ -53,6 +54,7 @@ function StartForm({ image, saves }: { image: GalleryImage; saves: SaveRecord[] 
   const [mode, setMode] = useState<StartMode>(prefs.lastStartMode);
   const [fullLoaded, setFullLoaded] = useState(false);
   const [starting, setStarting] = useState(false);
+  const [viewerOpen, setViewerOpen] = useState(false);
 
   const options = useMemo(() => pieceOptions(image.width, image.height, rotation), [image, rotation]);
   const opt = options.find((o) => o.target === count) ?? options[1];
@@ -97,14 +99,13 @@ function StartForm({ image, saves }: { image: GalleryImage; saves: SaveRecord[] 
             }}
           />
         </div>
-        <a
-          href={image.src}
-          target="_blank"
-          rel="noreferrer"
+        <button
+          onClick={() => setViewerOpen(true)}
           className="absolute bottom-3 left-4 flex items-center gap-1.5 text-xs text-white/60 hover:text-white"
         >
           <ExternalLinkIcon className="size-3.5" /> View full resolution · {image.width} × {image.height}
-        </a>
+        </button>
+        <ImageViewer open={viewerOpen} onOpenChange={setViewerOpen} src={image.src} title={image.title} />
       </div>
 
       {/* Settings */}

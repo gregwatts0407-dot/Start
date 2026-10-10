@@ -5,6 +5,7 @@ import { DownloadIcon, ExpandIcon, LayoutGridIcon, RotateCcwIcon, TrophyIcon } f
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { formatTime } from "@/lib/format";
+import { saveImageFile } from "@/lib/platform";
 
 export function CompletionDialog({
   open,
@@ -60,10 +61,8 @@ export function CompletionDialog({
             <Button variant="outline" onClick={onViewFull}>
               <ExpandIcon /> View full image
             </Button>
-            <Button variant="outline" asChild>
-              <a href={src} download={`${title}.webp`}>
-                <DownloadIcon /> Save image
-              </a>
+            <Button variant="outline" disabled={!src} onClick={() => src && void saveImageFile(src, `${title}.webp`).catch(() => {})}>
+              <DownloadIcon /> Save image
             </Button>
             <Button variant="outline" onClick={onPlayAgain}>
               <RotateCcwIcon /> Play again

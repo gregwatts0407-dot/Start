@@ -4,6 +4,16 @@ import { useLayoutEffect, useMemo, useState } from "react";
 import { SearchIcon, XIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { CATEGORIES, GALLERY, type GalleryImage } from "@/lib/images";
 import { useCustomImages } from "@/hooks/use-custom-images";
 import { deleteImage } from "@/lib/storage";
@@ -21,10 +31,17 @@ export function Gallery({ saves }: { saves: SaveRecord[] }) {
   const [filter, setFilter] = useState<Filter>("All");
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<GalleryImage | null>(null);
+  const [toDelete, setToDelete] = useState<GalleryImage | null>(null);
 
   // Next.js keeps visited routes alive (hidden) via <Activity>; make sure the
   // start dialog doesn't stay open in the background after navigating away.
-  useLayoutEffect(() => () => setSelected(null), []);
+  useLayoutEffect(
+    () => () => {
+      setSelected(null);
+      setToDelete(null);
+    },
+    [],
+  );
 
   const inProgress = useMemo(() => {
     const m = new Map<string, number>();
@@ -49,10 +66,10 @@ export function Gallery({ saves }: { saves: SaveRecord[] }) {
   const counts = (f: Filter) =>
     f === "All" ? all.length : f === "Yours" ? custom.length : GALLERY.filter((g) => g.category === f).length;
 
-  async function onDelete(img: GalleryImage) {
-    if (!img.custom) return;
-    if (!confirm(`Remove “${img.title}” from your images? Saves using it will no longer open.`)) return;
-    await deleteImage(img.id.slice(7));
+  async function confirmDelete() {
+    if (!toDelete?.custom) return;
+    await deleteImage(toDelete.id.slice(7));
+    setToDelete(null);
     toast("Image removed");
   }
 
@@ -118,7 +135,7 @@ export function Gallery({ saves }: { saves: SaveRecord[] }) {
             image={img}
             inProgress={inProgress.get(img.id)}
             onSelect={setSelected}
-            onDelete={img.custom ? onDelete : undefined}
+            onDelete={img.custom ? setToDelete : undefined}
           />
         ))}
       </div>
@@ -127,6 +144,23 @@ export function Gallery({ saves }: { saves: SaveRecord[] }) {
       )}
 
       <StartDialog image={selected} saves={saves} onOpenChange={(o) => !o && setSelected(null)} />
+
+      <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove “{toDelete?.title}”?</AlertDialogTitle>
+            <AlertDialogDescription>
+              The image is deleted from this browser. Puzzles that use it will no longer open.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction className="bg-destructive text-white hover:bg-destructive/90" onClick={confirmDelete}>
+              Remove image
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   );
 }

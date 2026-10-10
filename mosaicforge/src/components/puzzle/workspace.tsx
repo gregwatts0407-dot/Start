@@ -173,8 +173,8 @@ export function Workspace({ id }: { id: string }) {
         setInfo({ ...engine.info, rows: rec.config.rows, cols: rec.config.cols });
         setWs({ status: "ready", saveStatus: rec.state ? "saved" : "unsaved", lastSavedAt: rec.updatedAt });
         if (!rec.state) void doSave({ thumb: true });
-        if (!rec.state && !localStorage.getItem("mosaicforge-hinted")) {
-          localStorage.setItem("mosaicforge-hinted", "1");
+        if (!rec.state && !readFlag("mosaicforge-hinted")) {
+          writeFlag("mosaicforge-hinted");
           toast("Drag pieces to the board", {
             description: "Scroll or pinch to zoom, drag the background to pan. Press ? for all shortcuts.",
             duration: 7000,
@@ -465,4 +465,21 @@ function isDialogVisible(): boolean {
   return [...document.querySelectorAll<HTMLElement>("[role=dialog], [role=alertdialog]")].some(
     (el) => el.getClientRects().length > 0,
   );
+}
+
+/** localStorage can be unavailable (private mode, sandboxed frames). */
+function readFlag(key: string): boolean {
+  try {
+    return localStorage.getItem(key) != null;
+  } catch {
+    return false;
+  }
+}
+
+function writeFlag(key: string) {
+  try {
+    localStorage.setItem(key, "1");
+  } catch {
+    /* ignore */
+  }
 }

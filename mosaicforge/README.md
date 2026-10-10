@@ -14,6 +14,14 @@ npm run dev          # http://localhost:3000
 npm run build && npm start
 ```
 
+### Standalone build (claude.ai Artifact)
+
+```bash
+node scripts/build-artifact.mjs ./artifact-dist   # → artifact-dist/mosaicforge.html + images/
+```
+
+Bundles the same components into one self-contained page (esbuild + Tailwind CLI). `artifact/` holds the swaps: an in-memory router replacing `next/link` / `next/navigation`, relative asset paths, theme that follows the host, file saving through the Artifact `downloads` capability, and storage that mirrors saves to the viewer's private Artifact database (`data/users/<id>/…`) besides IndexedDB.
+
 No accounts, no backend: images ship in `public/images`, and progress lives in the browser's IndexedDB.
 
 ## Features

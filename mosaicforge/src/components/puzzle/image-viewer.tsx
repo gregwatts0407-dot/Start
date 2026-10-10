@@ -5,6 +5,7 @@ import { DownloadIcon, ZoomInIcon, ZoomOutIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { saveImageFile } from "@/lib/platform";
 
 /** Full-screen, full-resolution image viewer (click to toggle fit / 100%). */
 export function ImageViewer({
@@ -29,10 +30,14 @@ export function ImageViewer({
           <Button size="icon-sm" variant="ghost" className="text-white hover:bg-white/10 hover:text-white" onClick={() => setActual((a) => !a)} aria-label={actual ? "Fit to screen" : "Actual size"}>
             {actual ? <ZoomOutIcon /> : <ZoomInIcon />}
           </Button>
-          <Button size="icon-sm" variant="ghost" className="text-white hover:bg-white/10 hover:text-white" asChild>
-            <a href={src} download={`${title}.webp`} aria-label="Download image">
-              <DownloadIcon />
-            </a>
+          <Button
+            size="icon-sm"
+            variant="ghost"
+            className="text-white hover:bg-white/10 hover:text-white"
+            onClick={() => void saveImageFile(src, `${title}.webp`).catch(() => {})}
+            aria-label="Download image"
+          >
+            <DownloadIcon />
           </Button>
         </div>
         <div className={cn("size-full", actual ? "overflow-auto" : "flex items-center justify-center p-10")}>
