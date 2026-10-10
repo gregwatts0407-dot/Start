@@ -20,3 +20,13 @@ Open `index.html` in a browser, or serve the folder (for example `python3 -m htt
 | Cannon | 100  | 90    | Slow, deals splash damage      |
 | Frost  | 80   | 95    | Slows creeps by 50%            |
 | Sniper | 150  | 230   | Long range, heavy hits         |
+
+---
+
+# Cyber City Pinball
+
+A classic 80s/90s-style pinball table in a single self-contained file: `pinball/index.html` (canvas + vanilla JS, no dependencies). Open it in a browser to play.
+
+- **Flippers:** `←` / `Z` and `→` / `/` · **Plunger:** hold and release `Space` · **Pause:** `P` · **Restart:** `R` · **Nudge:** `T` / `↑` · **Sound:** `M` · **Flipper power:** `[` `]` · **Balls per game (3/5):** `B` on the attract screen
+- Touch: tap the left/right half for the flippers, hold bottom-right to plunge, tap the top display to pause.
+- Drop all 4 targets for 2-ball multiball (2x scoring), then shoot the ramp for jackpots. Complete the top lanes to raise the bonus multiplier, and chain ramp and orbit shots for combos. High scores are saved in localStorage.
