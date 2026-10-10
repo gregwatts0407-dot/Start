@@ -1,8 +1,15 @@
-# Tower Defense
+# Start
+
+This repository contains two browser games:
+
+- **[MosaicForge](mosaicforge/)** — a premium jigsaw puzzle app (Next.js, 100–2000 pieces, local progress saving). See [`mosaicforge/README.md`](mosaicforge/README.md).
+- **Tower Defense** — the plain HTML/JS game described below.
+
+## Tower Defense
 
 A browser tower-defense game. It uses plain HTML, CSS and JavaScript, so there is no build step and nothing to install.
 
-## Play
+### Play
 
 Open `index.html` in a browser, or serve the folder (for example `python3 -m http.server`) and visit it.
 
@@ -12,7 +19,7 @@ Open `index.html` in a browser, or serve the folder (for example `python3 -m htt
 - Creeps that reach the exit cost lives (tanks cost 2, bosses 5). Survive all 15 waves to win.
 - `P` pauses, the speed button cycles between 1x, 2x and 3x, and `Esc` or right-click cancels a selection.
 
-## Towers
+### Towers
 
 | Tower  | Cost | Range | Notes                          |
 |--------|------|-------|--------------------------------|
