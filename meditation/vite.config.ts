@@ -1,6 +1,7 @@
 /// <reference types="vitest/config" />
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+import { fileURLToPath } from 'node:url';
 import { defineConfig, type Plugin } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
@@ -18,15 +19,22 @@ function siteUrl(): Plugin {
   };
 }
 
+const artifact = process.env.VITE_ARTIFACT === '1';
+
 export default defineConfig({
   // Relative asset paths, so the same build works at a domain root or in a
   // sub-folder such as GitHub Pages' /<repo>/.
   base: './',
+  // The artifact build is a single page without a service worker.
+  resolve: artifact
+    ? { alias: { 'virtual:pwa-register': fileURLToPath(new URL('./src/stubs/pwa-register.ts', import.meta.url)) } }
+    : undefined,
+  build: artifact ? { outDir: 'dist-artifact', assetsInlineLimit: 100_000_000 } : undefined,
   plugins: [
     react(),
     tailwindcss(),
     siteUrl(),
-    VitePWA({
+    !artifact && VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'favicon-32.png', 'apple-touch-icon.png'],
       manifest: {

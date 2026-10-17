@@ -14,7 +14,17 @@ export function useTheme(preference: ThemePreference): void {
     return () => media.removeEventListener('change', onChange);
   }, []);
 
-  const dark = preference === 'dark' || (preference === 'system' && systemDark);
+  // When embedded, the host may set data-theme="light|dark" on <html>.
+  const [hostTheme, setHostTheme] = useState(() => document.documentElement.dataset.theme);
+  useEffect(() => {
+    const root = document.documentElement;
+    const observer = new MutationObserver(() => setHostTheme(root.dataset.theme));
+    observer.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => observer.disconnect();
+  }, []);
+
+  const followDark = hostTheme === 'dark' || (hostTheme !== 'light' && systemDark);
+  const dark = preference === 'dark' || (preference === 'system' && followDark);
 
   useEffect(() => {
     const root = document.documentElement;

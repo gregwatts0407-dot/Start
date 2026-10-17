@@ -1,5 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { ConfirmDialog } from '../components/Dialog';
+import { copyText } from '../components/ShareButton';
+import { IS_ARTIFACT } from '../lib/env';
 import { FlameIcon } from '../components/Icons';
 import { Button, Card, SectionTitle } from '../components/ui';
 import { WeeklyChart } from '../components/WeeklyChart';
@@ -34,8 +36,19 @@ export function ProgressScreen() {
   const [toDelete, setToDelete] = useState<SessionRecord | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const exportHistory = () => {
-    const blob = new Blob([JSON.stringify(buildExport(history), null, 2)], {
+  const exportHistory = async () => {
+    const json = JSON.stringify(buildExport(history), null, 2);
+    if (IS_ARTIFACT) {
+      // Downloads are blocked here, so hand over the backup via the clipboard.
+      const copied = await copyText(json);
+      setMessage(
+        copied
+          ? `Copied ${history.length} sessions to your clipboard. Paste into a note or file to keep them.`
+          : 'Couldn’t copy the backup. Your browser blocked clipboard access.',
+      );
+      return;
+    }
+    const blob = new Blob([json], {
       type: 'application/json',
     });
     const url = URL.createObjectURL(blob);
@@ -139,8 +152,8 @@ export function ProgressScreen() {
           merged — nothing is overwritten.
         </p>
         <div className="grid grid-cols-2 gap-2">
-          <Button onClick={exportHistory} disabled={history.length === 0}>
-            Export
+          <Button onClick={() => void exportHistory()} disabled={history.length === 0}>
+            {IS_ARTIFACT ? 'Copy backup' : 'Export'}
           </Button>
           <Button onClick={() => fileRef.current?.click()}>Import</Button>
         </div>

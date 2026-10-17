@@ -4,6 +4,7 @@ import { ConfirmDialog } from '../components/Dialog';
 import { ShareButton } from '../components/ShareButton';
 import { Button, Card, ChoiceChips, SectionTitle, Select, Slider, Toggle } from '../components/ui';
 import type { ThemePreference } from '../lib/types';
+import { IS_ARTIFACT } from '../lib/env';
 import { useInstallPrompt } from '../hooks/useInstallPrompt';
 import { resetAll, updateSettings, useSettings } from '../state/store';
 import { PRESET_MINUTES, TimerOptions } from './MeditateScreen';
@@ -76,15 +77,16 @@ export function SettingsScreen() {
       <Card>
         <SectionTitle>Share</SectionTitle>
         <p className="mb-4 text-sm text-muted">
-          Know someone who could use a calm moment? Send them the link. To install, use your
-          browser’s “Add to Home Screen” option.
+          {IS_ARTIFACT
+            ? 'Know someone who could use a calm moment? Send them the link to this page.'
+            : 'Know someone who could use a calm moment? Send them the link. To install, use your browser’s “Add to Home Screen” option.'}
         </p>
         {canInstall && (
           <Button className="mb-3 w-full" onClick={() => void install()}>
             Install on this device
           </Button>
         )}
-        <ShareButton />
+        {!IS_ARTIFACT && <ShareButton />}
       </Card>
 
       <Card>
