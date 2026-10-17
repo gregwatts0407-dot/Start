@@ -1,0 +1,116 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: #f5f2ec;
+  --surface: #fffdf9;
+  --surface-2: #ebe6dd;
+  --ink: #2a2926;
+  --muted: #5d5952;
+  --line: #ded7cb;
+  --accent: #4b6858;
+  --accent-ink: #ffffff;
+  --accent-soft: #dde6df;
+  --ring-track: #e4ded3;
+  --danger: #9b3b2f;
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #16191b;
+  --surface: #1f2326;
+  --surface-2: #2a3034;
+  --ink: #ebe7df;
+  --muted: #aaa69e;
+  --line: #343b40;
+  --accent: #9fc0ad;
+  --accent-ink: #11201a;
+  --accent-soft: #263630;
+  --ring-track: #2b3236;
+  --danger: #f0a497;
+  color-scheme: dark;
+}
+
+@theme {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-ring-track: var(--ring-track);
+  --color-danger: var(--danger);
+  --font-sans: ui-rounded, 'SF Pro Rounded', system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: var(--font-sans);
+  overscroll-behavior-y: none;
+  transition: background-color 400ms ease, color 400ms ease;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+input[type='range'] {
+  accent-color: var(--accent);
+  height: 2.75rem;
+  width: 100%;
+  cursor: pointer;
+}
+
+dialog::backdrop {
+  background: rgb(10 12 14 / 0.45);
+  backdrop-filter: blur(3px);
+}
+
+dialog[open] {
+  animation: rise 260ms ease-out;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.fade-in {
+  animation: fade 320ms ease-out;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
