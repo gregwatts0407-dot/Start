@@ -20,3 +20,21 @@ Open `index.html` in a browser, or serve the folder (for example `python3 -m htt
 | Cannon | 100  | 90    | Slow, deals splash damage      |
 | Frost  | 80   | 95    | Slows creeps by 50%            |
 | Sniper | 150  | 230   | Long range, heavy hits         |
+
+# Platformer
+
+A side-scrolling platformer in `platformer/`, also plain HTML, CSS and JavaScript. Open `platformer/index.html` to play.
+
+- Move with the arrow keys or `A`/`D`. Jump with `Space`, `↑`, `W` or `Z`; hold it to jump higher.
+- Collect coins, stomp enemies by landing on them, and avoid spikes and pits. Reach the flag to finish the level.
+- You have 3 lives across all 3 levels. Losing a life restarts the current level.
+- `P` pauses and `R` restarts the level. On touch screens, buttons below the game handle movement and jumping.
+
+Levels are drawn as text maps at the top of `platformer/game.js`, so you can edit them or add new ones there:
+
+| Char | Meaning          | Char | Meaning        |
+|------|------------------|------|----------------|
+| `#`  | Ground           | `o`  | Coin           |
+| `X`  | Stone block      | `e`  | Walking enemy  |
+| `-`  | One-way platform | `P`  | Player start   |
+| `^`  | Spikes           | `F`  | Goal flag      |
