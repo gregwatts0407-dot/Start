@@ -1,0 +1,30 @@
+name: Elder market data
+
+on:
+  push:
+    branches: [claude/elder-trading-system]
+    paths: [".github/workflows/elder-data.yml", "elder/fetch_data.py", "elder/refresh"]
+  workflow_dispatch:
+  schedule:
+    - cron: "17 22 * * 1-5"
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install yfinance pandas
+      - run: python elder/fetch_data.py
+      - name: Commit data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add elder/data
+          git diff --cached --quiet || git commit -m "Update Elder market data"
+          git push
