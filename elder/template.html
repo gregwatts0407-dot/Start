@@ -1,0 +1,385 @@
+<title>Elder Triple Screen Desk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a trading-desk scroll — ticker strip, the rulebook, then one bay per market (chart left, plan right). */
+:root {
+  --bg: #f3f4f6; --panel: #ffffff; --ink: #161b26; --ink-2: #4b5363; --ink-3: #7c8494;
+  --line: #dde1e8; --grid: #eceef2;
+  --green: #17864a; --red: #c8353b; --blue: #2f62c9;
+  --green-bg: #e3f3ea; --red-bg: #fbe7e7; --blue-bg: #e5ecfa;
+  --cone: #b8701c; --cone-1: rgba(184,112,28,.13); --cone-2: rgba(184,112,28,.24);
+  --zone: rgba(47,98,201,.13); --chan: #8a93a3;
+  --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-body: "Source Sans 3", system-ui, sans-serif;
+  --font-data: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f131a; --panel: #171c25; --ink: #e8ebf1; --ink-2: #aab1bf; --ink-3: #788194;
+  --line: #2a313e; --grid: #1f2530;
+  --green: #3cc47a; --red: #f0646a; --blue: #6f9bff;
+  --green-bg: #12301f; --red-bg: #3a1a1c; --blue-bg: #18264a;
+  --cone: #e6a453; --cone-1: rgba(230,164,83,.12); --cone-2: rgba(230,164,83,.24);
+  --zone: rgba(111,155,255,.15); --chan: #6b7487; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f131a; --panel: #171c25; --ink: #e8ebf1; --ink-2: #aab1bf; --ink-3: #788194;
+  --line: #2a313e; --grid: #1f2530;
+  --green: #3cc47a; --red: #f0646a; --blue: #6f9bff;
+  --green-bg: #12301f; --red-bg: #3a1a1c; --blue-bg: #18264a;
+  --cone: #e6a453; --cone-1: rgba(230,164,83,.12); --cone-2: rgba(230,164,83,.24);
+  --zone: rgba(111,155,255,.15); --chan: #6b7487; color-scheme: dark }
+
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 64px; display: grid; gap: 28px; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing: .01em; margin: 0; text-wrap: balance; line-height: 1.05; }
+h1 { font-size: clamp(34px, 5vw, 52px); }
+h2 { font-size: 30px; }
+h3 { font-size: 19px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); }
+p { margin: 0; max-width: 68ch; }
+.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+.muted { color: var(--ink-2); }
+.small { font-size: 13px; }
+.eyebrow { font-family: var(--font-data); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+
+.wrap > *, .rules > * { min-width: 0; }
+[hidden] { display: none !important; }
+header { display: grid; gap: 10px; }
+header .meta { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+
+.strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 1000px) { .strip { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); } }
+.tick { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 6px; text-decoration: none; color: inherit; }
+.tick:hover, .tick:focus-visible { border-color: var(--ink-3); outline: none; }
+.tick .row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.tick .name { font-family: var(--font-display); font-size: 21px; font-weight: 600; }
+.tick .px { font-size: 15px; }
+.chips { display: flex; gap: 4px; flex-wrap: wrap; }
+.chip { font-family: var(--font-data); font-size: 11px; padding: 2px 6px; border-radius: 4px; letter-spacing: .03em; white-space: nowrap; }
+.c1 { background: var(--green-bg); color: var(--green); }
+.c-1 { background: var(--red-bg); color: var(--red); }
+.c0 { background: var(--blue-bg); color: var(--blue); }
+.action { font-weight: 600; font-size: 14px; }
+.up { color: var(--green); } .dn { color: var(--red); }
+
+.rules { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 22px; display: grid; gap: 18px; }
+.screens { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; }
+.screen { display: grid; gap: 6px; align-content: start; }
+.screen b { font-family: var(--font-display); font-size: 18px; font-weight: 600; }
+.screen p { font-size: 14px; color: var(--ink-2); }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { font-weight: 600; color: var(--ink-2); font-size: 12px; }
+td { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+td:first-child { font-family: var(--font-body); font-weight: 600; }
+
+.bay { display: grid; gap: 14px; scroll-margin-top: 12px; }
+.bay-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+.bay-head .px { font-size: 20px; }
+.bay-body { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 14px; }
+@media (max-width: 960px) { .bay-body { grid-template-columns: minmax(0, 1fr); } }
+.chartbox { align-self: start; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 8px 8px; position: relative; min-width: 0; }
+.chartbox svg { display: block; width: 100%; height: auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; padding: 0 8px 8px; font-size: 12px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 14px; height: 10px; border-radius: 2px; display: inline-block; }
+.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--line); box-shadow: 0 6px 18px rgba(0,0,0,.12); border-radius: 6px; padding: 8px 10px; font-size: 12px; font-family: var(--font-data); display: grid; gap: 1px; min-width: 150px; z-index: 2; }
+.tip .t { font-family: var(--font-body); font-weight: 600; margin-bottom: 3px; }
+.tip .kv { display: flex; justify-content: space-between; gap: 14px; }
+.tip .kv span:first-child { color: var(--ink-3); }
+
+.side { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 10px; }
+.plan-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.plan-head .action { font-family: var(--font-display); font-size: 24px; font-weight: 600; }
+.badge { font-family: var(--font-data); font-size: 11px; padding: 2px 7px; border-radius: 4px; border: 1px solid var(--line); color: var(--ink-2); white-space: nowrap; }
+.kvs { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 13px; }
+.kvs dt { color: var(--ink-2); }
+.kvs dd { margin: 0; text-align: right; font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+.checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; font-size: 13px; }
+.checks li { display: grid; grid-template-columns: 16px 1fr auto; gap: 8px; align-items: baseline; }
+.checks .mk { font-weight: 700; }
+.checks .ok { color: var(--green); } .checks .no { color: var(--ink-3); }
+.checks .note { color: var(--ink-3); font-size: 12px; text-align: right; }
+.score { display: flex; gap: 3px; }
+.score i { width: 100%; height: 6px; border-radius: 2px; background: var(--grid); }
+.score i.on { background: var(--ink-2); }
+.probs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.prob { display: grid; gap: 2px; }
+.prob .v { font-family: var(--font-data); font-size: 20px; font-weight: 600; }
+.prob .l { font-size: 11px; color: var(--ink-3); line-height: 1.25; }
+.note-box { font-size: 13px; color: var(--ink-2); border-left: 3px solid var(--line); padding-left: 10px; }
+footer { display: grid; gap: 10px; font-size: 13px; color: var(--ink-2); }
+footer p { max-width: 90ch; }
+@media (prefers-reduced-motion: no-preference) { .tick { transition: border-color .15s; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Alexander Elder · Triple Screen · Impulse · SafeZone · Autoenvelope</span>
+    <h1>Elder Triple Screen Desk</h1>
+    <div class="meta small muted" id="meta"></div>
+  </header>
+
+  <nav class="strip" id="strip" aria-label="Markets"></nav>
+
+  <section class="rules" aria-labelledby="rules-h">
+    <h2 id="rules-h">The rulebook</h2>
+    <div class="screens">
+      <div class="screen"><span class="eyebrow">Screen 1 · Tide · weekly</span><b>Weekly Impulse gives permission</b><p>Green (13-week EMA and weekly MACD-histogram both rising) permits longs only. Red permits shorts only. Blue permits no new trades. Only the last completed week counts.</p></div>
+      <div class="screen"><span class="eyebrow">Screen 2 · Wave · daily</span><b>Trade the pullback against the tide</b><p>For a long, the 2-day EMA of Force Index dips below zero and the daily Impulse is not red. For a short, it rises above zero and the daily Impulse is not green. Bear/Bull Power and the 13/26-day value zone grade the setup.</p></div>
+      <div class="screen"><span class="eyebrow">Screen 3 · Entry</span><b>Trailing buy stop or value limit</b><p>Place a buy stop one tick above the setup bar's high and trail it lower each day until filled. Without a pullback, bid inside the value zone between the 13 and 26-day EMAs, never into strength.</p></div>
+      <div class="screen"><span class="eyebrow">Exits & money</span><b>SafeZone, channel, 2% and 6%</b><p>Initial stop below the last two lows. It trails up with the SafeZone stop (2.5× the average 10-day penetration) and is never lowered. Take profit at the Autoenvelope line. Risk 2% per long, 1% per short, and stop trading for the month at a 6% drawdown.</p></div>
+    </div>
+    <div>
+      <h3 style="margin-bottom:8px">Backtest of these exact rules · 5 years of daily data</h3>
+      <div class="tablewrap"><table id="bt"></table></div>
+      <p class="small muted" style="margin-top:8px" id="bt-note"></p>
+    </div>
+  </section>
+
+  <div id="bays" style="display:grid;gap:40px"></div>
+
+  <footer>
+    <h3>Method and caveats</h3>
+    <p><b>Forecast cone.</b> The cone is built from historical analogs, not a fitted model. Every past day in the same Elder state (weekly Impulse × daily Impulse) gives its next 30 bars, measured in units of that day's 20-day volatility. These paths are rescaled to today's volatility. The bands are the 10–90th and 25–75th percentiles, and the line is the median. "Target before stop" counts the analog paths that fill the order and resolve within 30 bars, using daily closes only.</p>
+    <p><b>Data.</b> Daily OHLCV comes from Yahoo Finance via the repo's GitHub Actions workflow. Gold uses front-month COMEX futures (GC=F) as a proxy for spot XAU/USD, which typically trades a few dollars below the futures price. Bars still forming on the as-of date are excluded for gold and Bitcoin. ASX 200 volume on Yahoo is unreliable, which weakens its Force Index.</p>
+    <p><b>Limits.</b> Weekly-tide strictness and short-side risk were chosen after comparing eight rule variants on this same 5-year window, so the backtest is in-sample and optimistic. It ignores costs, slippage and gaps through stops beyond the open. This is a research tool, not financial advice.</p>
+  </footer>
+</div>
+
+<script>
+const R = /*DATA*/null;
+const IMP = { "1": "Green", "-1": "Red", "0": "Blue" };
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const dp = k => ({ gold: 2, btc: 0, dji: 0, spx: 1, asx200: 1 })[k];
+const fmt = (v, d = 2) => v == null ? "—" : Number(v).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+const pct = (v, d = 0) => v == null ? "—" : (v * 100).toFixed(d) + "%";
+const sgn = (v, d = 2) => v == null ? "—" : (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(d);
+const el = (tag, attrs = {}, ...kids) => { const e = document.createElement(tag); for (const [k, v] of Object.entries(attrs)) { if (k === "class") e.className = v; else if (k === "text") e.textContent = v; else e.setAttribute(k, v); } kids.forEach(c => c && e.append(c)); return e; };
+const SVGNS = "http://www.w3.org/2000/svg";
+const s = (tag, attrs = {}) => { const e = document.createElementNS(SVGNS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); return e; };
+
+document.getElementById("meta").append(
+  el("span", { text: `As of ${R.as_of} · last completed daily bars` }),
+  el("span", { text: "Forecast horizon 30 bars" }),
+  el("span", { text: "Data: Yahoo Finance via GitHub Actions" }));
+
+// ---------- strip ----------
+const strip = document.getElementById("strip");
+R.instruments.forEach(m => {
+  const p = m.plan, d = dp(m.key);
+  strip.append(el("a", { class: "tick", href: "#" + m.key },
+    el("div", { class: "row" }, el("span", { class: "name", text: m.name }), el("span", { class: "px num", text: fmt(m.close, d) })),
+    el("div", { class: "row small" }, el("span", { class: m.chg >= 0 ? "num up" : "num dn", text: sgn(m.chg * 100, 2) + "%" }), el("span", { class: "muted num", text: m.last_date })),
+    el("div", { class: "chips" },
+      el("span", { class: "chip c" + p.weekly_impulse, text: "W " + IMP[p.weekly_impulse] }),
+      el("span", { class: "chip c" + p.daily_impulse, text: "D " + IMP[p.daily_impulse] }),
+      el("span", { class: "chip c0", style: "background:var(--grid);color:var(--ink-2)", text: m.score + "/8" })),
+    el("div", { class: "action", text: p.action + (p.provisional ? ` · ${p.side === 1 ? "long" : "short"} bias` : "") }),
+    el("div", { class: "small muted", text: `P(higher in 30 bars) ${pct(m.forecast.p_up)}` })));
+});
+
+// ---------- backtest table ----------
+(() => {
+  const t = document.getElementById("bt");
+  const head = ["Market", "Trades", "Win rate", "Avg R", "Long avg R", "Short avg R", "Profit factor", "Max DD", "System CAGR", "Buy & hold CAGR"];
+  t.append(el("thead", {}, el("tr", {}, ...head.map(h => el("th", { text: h })))));
+  const tb = el("tbody");
+  let all = [];
+  R.instruments.forEach(m => {
+    const x = m.stats;
+    tb.append(el("tr", {},
+      el("td", { text: m.name }), el("td", { text: `${x.n} (${x.longs}L/${x.shorts}S)` }), el("td", { text: pct(x.win_rate) }),
+      el("td", { text: sgn(x.avg_R) }), el("td", { text: sgn(x.long_avg_R) }), el("td", { text: sgn(x.short_avg_R) }),
+      el("td", { text: x.profit_factor == null ? "—" : x.profit_factor.toFixed(2) }), el("td", { text: pct(x.max_drawdown, 1) }),
+      el("td", { text: pct(x.cagr, 1) }), el("td", { text: pct(x.buy_hold_cagr, 1) })));
+  });
+  t.append(tb);
+  document.getElementById("bt-note").textContent = "R is profit or loss per unit of initial risk. Equity compounds from $100k under the 2%/1% per-trade and 6% monthly rules. The system is in the market only part of the time, so compare it with buy-and-hold on risk-adjusted terms, not raw CAGR. Long setups have positive expectancy in four of five markets. Shorts are negative in four of five, which is why they carry half the risk.";
+})();
+
+// ---------- bays ----------
+const bays = document.getElementById("bays");
+const charts = [];
+R.instruments.forEach(m => {
+  const p = m.plan, d = dp(m.key), f = m.forecast, x = m.stats;
+  const chartbox = el("div", { class: "chartbox" });
+  const legend = el("div", { class: "legend" });
+  [["var(--green)", "Impulse green"], ["var(--red)", "Impulse red"], ["var(--blue)", "Impulse blue"], ["var(--zone)", "Value zone 13/26 EMA"], ["var(--cone-2)", "Forecast 25–75%"], ["var(--cone-1)", "Forecast 10–90%"]]
+    .forEach(([c, l]) => legend.append(el("span", {}, el("i", { class: "sw", style: `background:${c};border:1px solid var(--line)` }), document.createTextNode(l))));
+  [["Autoenvelope", "var(--chan)"], ["SafeZone", "var(--ink-3)"]].forEach(([l, c]) => legend.append(el("span", {}, el("i", { class: "sw", style: `height:0;border-top:2px dashed ${c};background:none` }), document.createTextNode(l))));
+  chartbox.append(legend);
+  const holder = el("div"); chartbox.append(holder);
+  const tip = el("div", { class: "tip", hidden: "" }); chartbox.append(tip);
+
+  const dir = p.side === 1 ? "long" : "short";
+  const planCard = el("div", { class: "card" },
+    el("div", { class: "plan-head" }, el("span", { class: "action", text: p.action }), el("span", { class: "badge", text: (p.provisional ? "provisional " : "") + dir })),
+    el("p", { class: "small muted", text: p.detail }),
+    (() => { const dl = el("dl", { class: "kvs" });
+      [[p.kind === "stop" ? (p.side === 1 ? "Buy stop" : "Sell stop") : (p.side === 1 ? "Buy limit" : "Sell limit"), fmt(p.entry, d)], ["Protective stop", fmt(p.stop, d)], ["Target (channel)", fmt(p.target, d)], ["Reward : risk", p.rr.toFixed(2) + " : 1"], ["SafeZone stop today", fmt(p.safezone, d)], [`Size at ${p.risk_pct}% of $100k`, fmt(p.units_per_100k, m.key === "btc" ? 3 : 2) + (m.key === "gold" ? " oz" : m.key === "btc" ? " BTC" : " × index")]]
+        .forEach(([k, v]) => dl.append(el("dt", { text: k }), el("dd", { text: v }))); return dl; })(),
+    p.target_note ? el("p", { class: "small muted", text: p.target_note }) : null);
+
+  const trig = el("div", { class: "card" }, el("h3", { text: "Impulse triggers" }),
+    (() => { const dl = el("dl", { class: "kvs" });
+      [["Weekly turns green above", fmt(p.weekly_triggers.green_above, d)], ["Weekly turns red below", fmt(p.weekly_triggers.red_below, d)], ["Daily turns green above", fmt(p.daily_triggers.green_above, d)], ["Daily turns red below", fmt(p.daily_triggers.red_below, d)]]
+        .forEach(([k, v]) => dl.append(el("dt", { text: k }), el("dd", { text: v }))); return dl; })(),
+    el("p", { class: "small muted", text: `Closing levels for the ${m.last_week === m.last_date ? "next" : "current"} week and the next session. Between them, the Impulse prints blue.` }));
+
+  const score = el("div", { class: "score" }); for (let i = 0; i < 8; i++) score.append(el("i", { class: i < m.score ? "on" : "" }));
+  const checks = el("ul", { class: "checks" });
+  m.checks.forEach(c => checks.append(el("li", {}, el("span", { class: "mk " + (c.ok ? "ok" : "no"), text: c.ok ? "✓" : "–" }), el("span", { text: c.name }), el("span", { class: "note", text: c.note }))));
+  const conf = el("div", { class: "card" }, el("div", { class: "plan-head" }, el("h3", { text: `Confluence for a ${dir}` }), el("span", { class: "num", text: m.score + "/8" })), score, checks);
+
+  const probs = el("div", { class: "probs" },
+    ...[[pct(f.p_up), "Higher in 30 bars"], [pct(f.p_fill), "Order fills within 30 bars"], [f.p_target_first == null ? "—" : pct(f.p_target_first), "Target before stop, once filled"]]
+      .map(([v, l]) => el("div", { class: "prob" }, el("span", { class: "v", text: v }), el("span", { class: "l", text: l }))));
+  const fc = el("div", { class: "card" }, el("h3", { text: "Forecast · analogs" }), probs,
+    el("p", { class: "small muted", text: `${f.n} past days in state weekly ${IMP[f.state[0]]} × daily ${IMP[f.state[1]]}. Median path ends at ${fmt(f.bands.p50.at(-1), d)}, with an 80% range of ${fmt(f.bands.p10.at(-1), d)} to ${fmt(f.bands.p90.at(-1), d)}.` }),
+    el("p", { class: "small muted", text: `Backtest ${dir}s here: ${pct(p.side === 1 ? x.long_win : x.short_win)} win rate, ${sgn(p.side === 1 ? x.long_avg_R : x.short_avg_R)} R average.` }));
+
+  const bay = el("section", { class: "bay", id: m.key, "aria-labelledby": m.key + "-h" },
+    el("div", { class: "bay-head" }, el("h2", { id: m.key + "-h", text: m.name }), el("span", { class: "px num", text: fmt(m.close, d) }),
+      el("span", { class: (m.chg >= 0 ? "up" : "dn") + " num", text: sgn(m.chg * 100, 2) + "%" }), el("span", { class: "small muted", text: m.desc + " · " + m.unit })),
+    el("p", { class: "note-box", text: narrative(m) }),
+    el("div", { class: "bay-body" }, chartbox, el("div", { class: "side" }, planCard, conf, fc, trig)));
+  bays.append(bay);
+  charts.push({ m, holder, tip });
+});
+
+function narrative(m) {
+  const p = m.plan, f = m.forecast, d = dp(m.key);
+  const w = IMP[p.weekly_impulse].toLowerCase(), dv = p.weekly_developing == null ? null : IMP[p.weekly_developing].toLowerCase();
+  let t = `Weekly Impulse ${w}${dv ? `, with the developing week ${dv}` : ""}; daily Impulse ${IMP[p.daily_impulse].toLowerCase()}. `;
+  if (p.provisional) t += `No trade until the weekly bar gives permission. A weekly close ${p.side === 1 ? "above " + fmt(p.weekly_triggers.green_above, d) : "below " + fmt(p.weekly_triggers.red_below, d)} arms the ${p.side === 1 ? "long" : "short"} plan. `;
+  else t += `The tide is ${p.side === 1 ? "up" : "down"}, so only ${p.side === 1 ? "longs" : "shorts"} are allowed. `;
+  const med = f.bands.p50.at(-1), chg = med / m.close - 1;
+  t += `The analog median drifts ${chg >= 0 ? "up" : "down"} ${Math.abs(chg * 100).toFixed(1)}% over 30 bars, and ${pct(f.p_up)} of analog paths finish higher.`;
+  if ((p.side === 1 && f.p_up < 0.45) || (p.side === -1 && f.p_up > 0.55)) t += ` That base rate leans against the ${p.side === 1 ? "long" : "short"}, so treat the setup as low probability.`;
+  return t;
+}
+
+// ---------- chart ----------
+function draw({ m, holder, tip }) {
+  const W = Math.max(320, holder.clientWidth), narrow = W < 560;
+  const H = narrow ? 520 : 640, padL = 8, padR = narrow ? 58 : 70, top = 8, gap = 12, wkH = 34;
+  const histH = Math.round(H * 0.11), fiH = Math.round(H * 0.11), mainH = H - top - histH - fiH - wkH - 3 * gap - 4;
+  const yHist0 = top + mainH + gap, yFi0 = yHist0 + histH + gap, wkY = yFi0 + fiH + gap;
+  const bars = narrow ? m.bars.slice(-80) : m.bars, fut = m.future_dates, f = m.forecast.bands, p = m.plan, d = dp(m.key);
+  const N = bars.length + fut.length, step = (W - padL - padR) / N, bw = Math.max(1.5, step * 0.62);
+  const X = i => padL + step * (i + 0.5);
+  const vals = bars.flatMap(b => [b.h, b.l, b.up, b.lo]).concat(f.p10, f.p90, [p.entry, p.stop, p.target]).filter(v => v != null);
+  let lo = Math.min(...vals), hi = Math.max(...vals); const padv = (hi - lo) * 0.04; lo -= padv; hi += padv;
+  const Y = v => top + (hi - v) / (hi - lo) * mainH;
+  const svg = s("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": `${m.name} daily candlesticks coloured by Elder Impulse with 30-bar forecast cone` });
+  const C = { g: css("--green"), r: css("--red"), b: css("--blue"), ink: css("--ink"), ink2: css("--ink-2"), ink3: css("--ink-3"), grid: css("--grid"), line: css("--line"), cone: css("--cone"), c1: css("--cone-1"), c2: css("--cone-2"), zone: css("--zone"), chan: css("--chan"), panel: css("--panel") };
+  const impC = v => v === 1 ? C.g : v === -1 ? C.r : C.b;
+
+  // grid + price axis
+  const ticks = niceTicks(lo, hi, 6);
+  ticks.forEach(v => { svg.append(s("line", { x1: padL, x2: W - padR, y1: Y(v), y2: Y(v), stroke: C.grid })); const t = s("text", { x: W - padR + 6, y: Y(v) + 4, fill: C.ink3, "font-size": 11, "font-family": "JetBrains Mono, monospace" }); t.textContent = fmtAxis(v, m.key); svg.append(t); });
+  // forecast region shade
+  const fx0 = X(bars.length) - step / 2;
+  svg.append(s("rect", { x: fx0, y: top, width: W - padR - fx0, height: mainH, fill: C.grid, opacity: 0.5 }));
+  // value zone band
+  const zonePts = bars.map((b, i) => `${X(i)},${Y(b.e13)}`).concat(bars.map((b, i) => `${X(i)},${Y(b.e26)}`).reverse());
+  svg.append(s("polygon", { points: zonePts.join(" "), fill: C.zone }));
+  // channel lines
+  const path = (arr, key) => arr.map((b, i) => b[key] == null ? null : `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(b[key]).toFixed(1)}`).filter(Boolean).join(" ");
+  ["up", "lo"].forEach(k => svg.append(s("path", { d: path(bars, k), fill: "none", stroke: C.chan, "stroke-width": 1.2, "stroke-dasharray": "5 4" })));
+  svg.append(s("path", { d: path(bars, "e13"), fill: "none", stroke: C.ink2, "stroke-width": 1.2 }));
+  svg.append(s("path", { d: path(bars, "e26"), fill: "none", stroke: C.ink3, "stroke-width": 1.2 }));
+  // SafeZone dots on the plan side
+  const szKey = p.side === 1 ? "szl" : "szs";
+  bars.forEach((b, i) => { if (b[szKey] != null && b[szKey] > lo && b[szKey] < hi) svg.append(s("circle", { cx: X(i), cy: Y(b[szKey]), r: 1.4, fill: C.ink3 })); });
+  // candles
+  bars.forEach((b, i) => {
+    const c = impC(b.imp), x = X(i);
+    svg.append(s("line", { x1: x, x2: x, y1: Y(b.h), y2: Y(b.l), stroke: c, "stroke-width": 1 }));
+    const y1 = Y(Math.max(b.o, b.c)), y2 = Y(Math.min(b.o, b.c));
+    svg.append(s("rect", { x: x - bw / 2, y: y1, width: bw, height: Math.max(1, y2 - y1), fill: b.c >= b.o ? C.panel : c, stroke: c, "stroke-width": 1 }));
+  });
+  // forecast cone, anchored at last close
+  const last = bars.length - 1, fi = j => X(bars.length + j);
+  const band = (a, b2, fill) => { const pts = [`${X(last)},${Y(bars[last].c)}`].concat(a.map((v, j) => `${fi(j)},${Y(v)}`), b2.map((v, j) => `${fi(j)},${Y(v)}`).reverse()); svg.append(s("polygon", { points: pts.join(" "), fill })); };
+  band(f.p90, f.p10, C.c1); band(f.p75, f.p25, C.c2);
+  svg.append(s("path", { d: `M${X(last)},${Y(bars[last].c)} ` + f.p50.map((v, j) => `L${fi(j)},${Y(v)}`).join(" "), fill: "none", stroke: C.cone, "stroke-width": 2 }));
+  // plan lines across the forecast zone
+  const lvl = (v, color, label, dash) => {
+    const y = Y(v);
+    svg.append(s("line", { x1: X(last), x2: W - padR, y1: y, y2: y, stroke: color, "stroke-width": 1.4, "stroke-dasharray": dash }));
+    const g = s("g"); const tw = narrow ? 52 : 62;
+    g.append(s("rect", { x: W - padR + 2, y: y - 8, width: tw, height: 16, rx: 3, fill: color }));
+    const t = s("text", { x: W - padR + 6, y: y + 4, fill: C.panel, "font-size": 10.5, "font-family": "JetBrains Mono, monospace", "font-weight": 600 }); t.textContent = fmtAxis(v, m.key); g.append(t);
+    svg.append(g);
+    const tl = s("text", { x: X(last) + 4, y: label === "Stop" ? y + 13 : y - 4, fill: color, "font-size": 11, "font-weight": 600 }); tl.textContent = label; svg.append(tl);
+  };
+  lvl(p.target, C.g, "Target", "6 3");
+  lvl(p.entry, C.ink, p.kind === "stop" ? "Entry stop" : "Entry limit", "2 3");
+  lvl(p.stop, C.r, "Stop", "6 3");
+  // last price marker
+  const lc = bars[last].c; svg.append(s("circle", { cx: X(last), cy: Y(lc), r: 3.5, fill: C.cone, stroke: C.panel, "stroke-width": 1.5 }));
+
+  // MACD histogram
+  const hv = bars.map(b => b.hist), hm = Math.max(...hv.map(Math.abs)) || 1, hz = yHist0 + histH / 2;
+  svg.append(s("line", { x1: padL, x2: W - padR, y1: hz, y2: hz, stroke: C.line }));
+  bars.forEach((b, i) => { const prev = i ? bars[i - 1].hist : b.hist; const h = b.hist / hm * histH / 2; svg.append(s("rect", { x: X(i) - bw / 2, y: Math.min(hz, hz - h), width: bw, height: Math.max(0.5, Math.abs(h)), fill: b.hist >= prev ? C.g : C.r, opacity: 0.8 })); });
+  label(svg, "MACD-histogram (12,26,9)", padL + 2, yHist0 + 10, C.ink3);
+  // Force index 2
+  const fv = bars.map(b => b.fi2), fm = Math.max(...fv.map(Math.abs)) || 1, fz = yFi0 + fiH / 2;
+  svg.append(s("line", { x1: padL, x2: W - padR, y1: fz, y2: fz, stroke: C.line }));
+  bars.forEach((b, i) => { const h = b.fi2 / fm * fiH / 2; svg.append(s("rect", { x: X(i) - bw / 2, y: Math.min(fz, fz - h), width: bw, height: Math.max(0.5, Math.abs(h)), fill: b.fi2 >= 0 ? C.g : C.r, opacity: 0.55 })); });
+  label(svg, "Force Index, 2-day EMA", padL + 2, yFi0 + 10, C.ink3);
+  // weekly impulse strip
+  const wk = m.weeks.slice(narrow ? -30 : -52), ws = (W - padL - padR) / wk.length;
+  wk.forEach((b, i) => svg.append(s("rect", { x: padL + i * ws + 0.5, y: wkY + 12, width: Math.max(1, ws - 1.5), height: wkH - 12, rx: 1.5, fill: impC(b.imp), opacity: b.done ? 0.9 : 0.35 })));
+  label(svg, `Weekly Impulse, last ${wk.length} weeks (faded = week in progress)`, padL + 2, wkY + 8, C.ink3);
+  // date labels
+  const nl = narrow ? 3 : 6;
+  for (let k = 0; k <= nl; k++) { const i = Math.round(k * (N - 1) / nl); const t = s("text", { x: X(i), y: top + mainH + 0, fill: C.ink3, "font-size": 10.5, "text-anchor": "middle", dy: -4 }); const dt = i < bars.length ? bars[i].t : fut[i - bars.length]; t.textContent = dt.slice(5); if (k === 0) t.setAttribute("text-anchor", "start"); if (k === nl) t.setAttribute("text-anchor", "end"); svg.append(t); }
+
+  // hover layer
+  const cross = s("line", { y1: top, y2: yFi0 + fiH, stroke: C.ink3, "stroke-dasharray": "3 3", visibility: "hidden" });
+  svg.append(cross);
+  const hit = s("rect", { x: padL, y: top, width: W - padL - padR, height: yFi0 + fiH - top, fill: "transparent" });
+  svg.append(hit);
+  const show = ev => {
+    const r = svg.getBoundingClientRect(), sx = (ev.clientX - r.left) * W / r.width;
+    const i = Math.max(0, Math.min(N - 1, Math.floor((sx - padL) / step)));
+    cross.setAttribute("x1", X(i)); cross.setAttribute("x2", X(i)); cross.setAttribute("visibility", "visible");
+    tip.replaceChildren();
+    const kv = (k, v) => tip.append(el("div", { class: "kv" }, el("span", { text: k }), el("span", { text: v })));
+    if (i < bars.length) {
+      const b = bars[i];
+      tip.append(el("div", { class: "t", text: `${b.t} · Impulse ${IMP[b.imp]}` }));
+      kv("Open", fmt(b.o, d)); kv("High", fmt(b.h, d)); kv("Low", fmt(b.l, d)); kv("Close", fmt(b.c, d));
+      kv("EMA 13 / 26", `${fmt(b.e13, d)} / ${fmt(b.e26, d)}`); kv("Channel", `${fmt(b.lo, d)} – ${fmt(b.up, d)}`);
+    } else {
+      const j = i - bars.length;
+      tip.append(el("div", { class: "t", text: `${fut[j]} · forecast bar ${j + 1}` }));
+      kv("90th pct", fmt(f.p90[j], d)); kv("75th pct", fmt(f.p75[j], d)); kv("Median", fmt(f.p50[j], d)); kv("25th pct", fmt(f.p25[j], d)); kv("10th pct", fmt(f.p10[j], d));
+    }
+    tip.hidden = false;
+    const bx = holder.getBoundingClientRect(), box = tip.parentElement.getBoundingClientRect();
+    const px = (X(i) * r.width / W) + (r.left - box.left), tw = tip.offsetWidth;
+    tip.style.left = Math.min(box.width - tw - 6, Math.max(6, px + (px > box.width / 2 ? -tw - 14 : 14))) + "px";
+    tip.style.top = Math.max(30, (ev.clientY - box.top) - 40) + "px";
+  };
+  hit.addEventListener("pointermove", show); hit.addEventListener("pointerdown", show);
+  hit.addEventListener("pointerleave", () => { tip.hidden = true; cross.setAttribute("visibility", "hidden"); });
+  holder.replaceChildren(svg);
+}
+function label(svg, text, x, y, fill) { const t = s("text", { x, y, fill, "font-size": 10.5, "letter-spacing": ".04em" }); t.textContent = text.toUpperCase(); svg.append(t); }
+function niceTicks(lo, hi, n) { const span = hi - lo, raw = span / n, mag = 10 ** Math.floor(Math.log10(raw)), st = [1, 2, 2.5, 5, 10].map(k => k * mag).find(k => span / k <= n) || mag * 10; const out = []; for (let v = Math.ceil(lo / st) * st; v <= hi; v += st) out.push(v); return out; }
+function fmtAxis(v, k) { return k === "btc" ? (v / 1000).toFixed(1) + "k" : Number(v).toLocaleString("en-US", { maximumFractionDigits: k === "gold" ? 0 : 0 }); }
+
+const redraw = () => charts.forEach(draw);
+redraw();
+let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(redraw, 120); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redraw);
+new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+</script>
