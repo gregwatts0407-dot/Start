@@ -1,30 +1,72 @@
-name: Elder market data
+name: Elder system run
 
+# Ways to rerun:
+#  - Actions tab -> "Elder system run" -> Run workflow (once this file is on the default branch)
+#  - edit elder/refresh on this branch (GitHub web or mobile is fine) and commit
+#  - a push that changes the system's code or config
+#  - automatically after the US close on weekdays (default branch only)
 on:
-  push:
-    branches: [claude/elder-trading-system]
-    paths: [".github/workflows/elder-data.yml", "elder/fetch_data.py", "elder/refresh"]
   workflow_dispatch:
+    inputs:
+      only:
+        description: "Instrument keys to run, comma-separated (blank = all)"
+        required: false
+        default: ""
+      fetch:
+        description: "Download fresh prices first"
+        type: boolean
+        default: true
+  push:
+    branches: [main, claude/elder-trading-system]
+    paths:
+      - ".github/workflows/elder-data.yml"
+      - "elder/refresh"
+      - "elder/config.json"
+      - "elder/*.py"
+      - "elder/template.html"
   schedule:
     - cron: "17 22 * * 1-5"
 
 permissions:
   contents: write
 
+concurrency:
+  group: elder-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  fetch:
+  run:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install yfinance pandas
-      - run: python elder/fetch_data.py
-      - name: Commit data
+          cache: pip
+      - run: pip install yfinance pandas numpy
+      - name: Fetch prices and run the system
+        env:
+          ONLY: ${{ github.event.inputs.only }}
+          FETCH: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.fetch == 'true' }}
+        run: |
+          args=""
+          [ "$FETCH" = "true" ] && args="$args --fetch"
+          [ -n "$ONLY" ] && args="$args --only $ONLY"
+          python elder/run.py $args
+      - name: Upload the chart page
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: elder-desk
+          path: |
+            elder/elder_desk.html
+            elder/report.json
+      - name: Commit results
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add elder/data
-          git diff --cached --quiet || git commit -m "Update Elder market data"
-          git push
+          git add elder/data elder/history elder/report.json elder/elder_desk.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Elder system run $(date -u +%Y-%m-%dT%H:%MZ)"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"

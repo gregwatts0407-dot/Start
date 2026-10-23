@@ -1,8 +1,9 @@
 """Alexander Elder trading system: Triple Screen + Impulse + SafeZone + Autoenvelope.
 
-Reads daily OHLCV from elder/data/<name>.csv, runs the rules on every instrument,
-backtests them under the 2% / 6% risk rules, builds a volatility-scaled analog
-forecast from the current Elder state, and writes elder/report.json.
+Reads daily OHLCV from elder/data/<key>.csv for each instrument in config.json,
+runs the rules, backtests them under the per-trade and monthly risk rules, builds a
+volatility-scaled analog forecast from the current Elder state, and returns the
+report that run.py writes to report.json and elder_desk.html.
 
 Rules (long side; shorts mirror them):
   Screen 1 (tide, weekly)  Weekly Impulse green permits longs, red permits shorts,
@@ -22,6 +23,7 @@ Rules (long side; shorts mirror them):
                            6% of equity for the month.
 """
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
@@ -30,19 +32,13 @@ import pandas as pd
 HERE = Path(__file__).parent
 DATA = HERE / "data"
 
-INSTRUMENTS = [
-    ("gold", "Gold", "COMEX gold futures (GC=F), proxy for spot XAU/USD", "USD/oz", 0.1, "W-FRI"),
-    ("btc", "Bitcoin", "BTC-USD, 24/7 market", "USD", 1.0, "W-SUN"),
-    ("dji", "Dow Jones", "Dow Jones Industrial Average (^DJI)", "pts", 1.0, "W-FRI"),
-    ("spx", "S&P 500", "S&P 500 index (^GSPC)", "pts", 0.25, "W-FRI"),
-    ("asx200", "ASX 200", "S&P/ASX 200 index (^AXJO)", "pts", 1.0, "W-FRI"),
-]
-AS_OF = pd.Timestamp("2026-10-23")
-DROP_TODAY = {"gold", "btc"}  # these trade through today; their last bar is still forming
-
-HORIZON = 30
-CHART_BARS = 130
-SZ_LOOKBACK, SZ_COEF = 10, 2.5
+CONFIG = json.loads((HERE / "config.json").read_text())
+P = CONFIG["params"]
+HORIZON = P["horizon_bars"]
+CHART_BARS = P["chart_bars"]
+WARMUP = P["warmup_bars"]
+SZ_LOOKBACK, SZ_COEF = P["safezone_lookback"], P["safezone_coef"]
+RISK = {1: P["risk_long"], -1: P["risk_short"]}
 
 
 def ema(s, n):
@@ -172,10 +168,7 @@ def setup(d, i, side):
     return r.tide == -1 and r.fi2 > 0 and r.imp != 1
 
 
-RISK = {1: 0.02, -1: 0.01}
-
-
-def backtest(d, tick, start=130):
+def backtest(d, tick, start=WARMUP):
     equity, trades, pending, pos = 100_000.0, [], None, None
     month, month_loss = None, 0.0
     curve = []
@@ -196,7 +189,7 @@ def backtest(d, tick, start=130):
                     exit_px, why = max(r.Open, pos["stop"]), "stop"
                 elif r.Low <= pos["target"]:
                     exit_px, why = min(r.Open, pos["target"]), "target"
-            if exit_px is None and (r.tide == -s or i - pos["i"] >= 40):
+            if exit_px is None and (r.tide == -s or i - pos["i"] >= P["time_stop_bars"]):
                 exit_px, why = r.Close, "tide" if r.tide == -s else "time"
             if exit_px is not None:
                 pnl = (exit_px - pos["entry"]) * s * pos["units"]
@@ -221,7 +214,7 @@ def backtest(d, tick, start=130):
                 entry = max(r.Open, px) if s == 1 else min(r.Open, px)
                 stop = pending["stop"]
                 risk = (entry - stop) * s
-                open_risk_ok = month_loss + RISK[s] * equity <= 0.06 * equity
+                open_risk_ok = month_loss + RISK[s] * equity <= P["monthly_loss_limit"] * equity
                 if risk > 0 and open_risk_ok:
                     pos = {"side": s, "entry": float(entry), "stop": float(stop), "target": pending["target"],
                            "risk": float(risk), "units": RISK[s] * equity / risk, "i": i, "date": r.name,
@@ -291,13 +284,13 @@ def analog_forecast(d, side, entry, stop, target, kind):
     logc = np.log(d.Close.values)
     sig = d.sigma.values
     paths = []
-    for i in range(130, len(d) - HORIZON):
+    for i in range(WARMUP, len(d) - HORIZON):
         if state_key(d.iloc[i]) != key or not np.isfinite(sig[i]) or sig[i] == 0:
             continue
         paths.append((logc[i + 1:i + 1 + HORIZON] - logc[i]) / sig[i])
     if len(paths) < 25:  # too few: fall back to tide alone
         tide = int(d.tide.iloc[-1])
-        for i in range(130, len(d) - HORIZON):
+        for i in range(WARMUP, len(d) - HORIZON):
             if int(d.tide.iloc[i]) == tide and np.isfinite(sig[i]) and sig[i] > 0:
                 paths.append((logc[i + 1:i + 1 + HORIZON] - logc[i]) / sig[i])
     P = np.array(paths) * d.sigma.iloc[-1]
@@ -422,61 +415,71 @@ def confluence(d, plan, div):
     return checks
 
 
-def run():
-    report = {"as_of": str(AS_OF.date()), "instruments": []}
-    for key, name, desc, unit, tick, rule in INSTRUMENTS:
-        raw = pd.read_csv(DATA / f"{key}.csv", parse_dates=["Date"], index_col="Date")
-        raw = raw[~raw.index.duplicated()].sort_index()
-        if key in DROP_TODAY:
-            raw = raw[raw.index < AS_OF]
-        d = indicators(raw)
-        w = weekly(raw, rule)
-        last_day = d.index[-1]
-        last_complete = w.index[w.index <= last_day].max()
-        d = attach_tide(d, w, last_complete)
-        trades, curve = backtest(d, tick)
-        st = stats(trades, curve, d, 130)
-        plan, side = current_plan(d, w, last_complete, tick)
-        div, div_pts = divergence(d)
-        fc = analog_forecast(d, side, plan.get("entry"), plan.get("stop"), plan.get("target"), plan["kind"])
-        checks = confluence(d, plan, div)
-        score = sum(c["ok"] for c in checks)
-        tail = d.iloc[-CHART_BARS:]
-        bars = [{"t": str(ix.date()), "o": r.Open, "h": r.High, "l": r.Low, "c": r.Close, "imp": int(r.imp),
-                 "e13": r.ema13, "e26": r.ema26, "up": r.upper, "lo": r.lower, "hist": r["hist"], "fi2": r.fi2,
-                 "szl": r.sz_long, "szs": r.sz_short}
-                for ix, r in tail.iterrows()]
-        wt = w.iloc[-60:]
-        wbars = [{"t": str(ix.date()), "o": r.Open, "h": r.High, "l": r.Low, "c": r.Close, "imp": int(r.imp),
-                  "e26": r.ema26, "done": bool(ix <= last_complete)} for ix, r in wt.iterrows()]
-        step = pd.Timedelta(days=1)
-        future, t = [], last_day
-        while len(future) < HORIZON:
-            t += step
-            if key == "btc" or t.weekday() < 5:
-                future.append(str(t.date()))
-        r = d.iloc[-1]
-        report["instruments"].append({
-            "key": key, "name": name, "desc": desc, "unit": unit, "last_date": str(last_day.date()),
-            "last_week": str(last_complete.date()),
-            "close": r.Close, "chg": float(r.Close / d.Close.iloc[-2] - 1),
-            "levels": {"ema13": r.ema13, "ema26": r.ema26, "upper": r.upper, "lower": r.lower, "atr": r.atr,
-                       "sz_long": r.sz_long, "sz_short": r.sz_short, "fi2": r.fi2, "fi13": r.fi13,
-                       "bull": r.bull, "bear": r.bear, "hist": r["hist"],
-                       "w_ema26": float(w.loc[last_complete, "ema26"]),
-                       "w_hist": float(w.loc[last_complete, "hist"])},
-            "plan": plan, "divergence": div, "divergence_points": div_pts,
-            "checks": checks, "score": score, "forecast": fc, "future_dates": future,
-            "stats": st, "recent_trades": trades[-6:], "bars": bars, "weeks": wbars,
-        })
-        print(f"{name:10s} close {r.Close:,.2f} tide {plan['tide']:+d} imp {plan['daily_impulse']:+d} "
-              f"-> {plan['action']} {plan['side']:+d}  score {score}/8  trades {st.get('n')} win {st.get('win_rate', 0):.0%} "
-              f"avgR {st.get('avg_R', 0):+.2f}  P(up30) {fc['p_up']:.0%} n={fc['n']} "
-              f"P(tgt) {fc.get('p_target_first')}")
-    payload = json.dumps(clean(report), allow_nan=False)
-    (HERE / "report.json").write_text(payload)
-    page = (HERE / "template.html").read_text().replace("/*DATA*/null", payload)
-    (HERE / "elder_desk.html").write_text(page)
+def completed_bars(raw, close_utc, now):
+    """Drop a last bar that is still forming: dated after today (UTC), or dated today
+    before the instrument's session close."""
+    hh, mm = (int(x) for x in close_utc.split(":"))
+    closes = pd.Timestamp(now.date()) + pd.Timedelta(hours=hh, minutes=mm)
+    last = raw.index[-1]
+    if last.date() > now.date() or (last.date() == now.date() and pd.Timestamp(now.replace(tzinfo=None)) < closes):
+        return raw.iloc[:-1], str(last.date())
+    return raw, None
+
+
+def analyse(inst, now):
+    key, tick, rule = inst["key"], inst["tick"], inst["week"]
+    raw = pd.read_csv(DATA / f"{key}.csv", parse_dates=["Date"], index_col="Date")
+    raw = raw[~raw.index.duplicated()].sort_index().dropna(subset=["Close"])
+    raw, dropped = completed_bars(raw, inst["session_close_utc"], now)
+    d = indicators(raw)
+    w = weekly(raw, rule)
+    last_day = d.index[-1]
+    last_complete = w.index[w.index <= last_day].max()
+    d = attach_tide(d, w, last_complete)
+    trades, curve = backtest(d, tick)
+    st = stats(trades, curve, d, WARMUP)
+    plan, side = current_plan(d, w, last_complete, tick)
+    div, div_pts = divergence(d)
+    fc = analog_forecast(d, side, plan.get("entry"), plan.get("stop"), plan.get("target"), plan["kind"])
+    checks = confluence(d, plan, div)
+    tail = d.iloc[-CHART_BARS:]
+    bars = [{"t": str(ix.date()), "o": r.Open, "h": r.High, "l": r.Low, "c": r.Close, "imp": int(r.imp),
+             "e13": r.ema13, "e26": r.ema26, "up": r.upper, "lo": r.lower, "hist": r["hist"], "fi2": r.fi2,
+             "szl": r.sz_long, "szs": r.sz_short}
+            for ix, r in tail.iterrows()]
+    wt = w.iloc[-60:]
+    wbars = [{"t": str(ix.date()), "o": r.Open, "h": r.High, "l": r.Low, "c": r.Close, "imp": int(r.imp),
+              "e26": r.ema26, "done": bool(ix <= last_complete)} for ix, r in wt.iterrows()]
+    future, t = [], last_day
+    while len(future) < HORIZON:
+        t += pd.Timedelta(days=1)
+        if inst["session_close_utc"] == "24:00" or t.weekday() < 5:
+            future.append(str(t.date()))
+    r = d.iloc[-1]
+    return {
+        "key": key, "name": inst["name"], "desc": inst["desc"], "unit": inst["unit"], "decimals": inst["decimals"],
+        "last_date": str(last_day.date()), "last_week": str(last_complete.date()), "dropped_forming_bar": dropped,
+        "close": r.Close, "chg": float(r.Close / d.Close.iloc[-2] - 1),
+        "levels": {"ema13": r.ema13, "ema26": r.ema26, "upper": r.upper, "lower": r.lower, "atr": r.atr,
+                   "sz_long": r.sz_long, "sz_short": r.sz_short, "fi2": r.fi2, "fi13": r.fi13,
+                   "bull": r.bull, "bear": r.bear, "hist": r["hist"],
+                   "w_ema26": float(w.loc[last_complete, "ema26"]),
+                   "w_hist": float(w.loc[last_complete, "hist"])},
+        "plan": plan, "divergence": div, "divergence_points": div_pts,
+        "checks": checks, "score": sum(c["ok"] for c in checks), "forecast": fc, "future_dates": future,
+        "stats": st, "recent_trades": trades[-6:], "bars": bars, "weeks": wbars,
+    }
+
+
+def run(only=None, now=None):
+    now = now or datetime.now(timezone.utc)
+    report = {"as_of": str(now.date()), "generated_at": now.isoformat(timespec="seconds"),
+              "params": P, "instruments": []}
+    for inst in CONFIG["instruments"]:
+        if only and inst["key"] not in only:
+            continue
+        report["instruments"].append(clean(analyse(inst, now)))
+    return report
 
 
 def clean(o):
@@ -491,7 +494,3 @@ def clean(o):
     if isinstance(o, (float, np.floating)):
         return None if not np.isfinite(o) else round(float(o), 6)
     return o
-
-
-if __name__ == "__main__":
-    run()

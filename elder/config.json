@@ -1,0 +1,21 @@
+{
+  "instruments": [
+    {"key": "gold", "name": "Gold", "tickers": ["XAUUSD=X", "GC=F"], "desc": "COMEX gold futures (GC=F), proxy for spot XAU/USD", "unit": "USD/oz", "tick": 0.1, "week": "W-FRI", "session_close_utc": "22:00", "decimals": 2},
+    {"key": "btc", "name": "Bitcoin", "tickers": ["BTC-USD"], "desc": "BTC-USD, 24/7 market", "unit": "USD", "tick": 1.0, "week": "W-SUN", "session_close_utc": "24:00", "decimals": 0},
+    {"key": "dji", "name": "Dow Jones", "tickers": ["^DJI"], "desc": "Dow Jones Industrial Average (^DJI)", "unit": "pts", "tick": 1.0, "week": "W-FRI", "session_close_utc": "21:00", "decimals": 0},
+    {"key": "spx", "name": "S&P 500", "tickers": ["^GSPC"], "desc": "S&P 500 index (^GSPC)", "unit": "pts", "tick": 0.25, "week": "W-FRI", "session_close_utc": "21:00", "decimals": 1},
+    {"key": "asx200", "name": "ASX 200", "tickers": ["^AXJO"], "desc": "S&P/ASX 200 index (^AXJO)", "unit": "pts", "tick": 1.0, "week": "W-FRI", "session_close_utc": "06:30", "decimals": 1}
+  ],
+  "params": {
+    "history": "5y",
+    "horizon_bars": 30,
+    "chart_bars": 130,
+    "safezone_lookback": 10,
+    "safezone_coef": 2.5,
+    "risk_long": 0.02,
+    "risk_short": 0.01,
+    "monthly_loss_limit": 0.06,
+    "time_stop_bars": 40,
+    "warmup_bars": 130
+  }
+}

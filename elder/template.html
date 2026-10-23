@@ -60,6 +60,7 @@ header .meta { display: flex; flex-wrap: wrap; gap: 6px 18px; }
 .c-1 { background: var(--red-bg); color: var(--red); }
 .c0 { background: var(--blue-bg); color: var(--blue); }
 .action { font-weight: 600; font-size: 14px; }
+.changed { color: var(--cone); font-weight: 600; }
 .up { color: var(--green); } .dn { color: var(--red); }
 
 .rules { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 22px; display: grid; gap: 18px; }
@@ -131,7 +132,7 @@ footer p { max-width: 90ch; }
       <div class="screen"><span class="eyebrow">Screen 1 · Tide · weekly</span><b>Weekly Impulse gives permission</b><p>Green (13-week EMA and weekly MACD-histogram both rising) permits longs only. Red permits shorts only. Blue permits no new trades. Only the last completed week counts.</p></div>
       <div class="screen"><span class="eyebrow">Screen 2 · Wave · daily</span><b>Trade the pullback against the tide</b><p>For a long, the 2-day EMA of Force Index dips below zero and the daily Impulse is not red. For a short, it rises above zero and the daily Impulse is not green. Bear/Bull Power and the 13/26-day value zone grade the setup.</p></div>
       <div class="screen"><span class="eyebrow">Screen 3 · Entry</span><b>Trailing buy stop or value limit</b><p>Place a buy stop one tick above the setup bar's high and trail it lower each day until filled. Without a pullback, bid inside the value zone between the 13 and 26-day EMAs, never into strength.</p></div>
-      <div class="screen"><span class="eyebrow">Exits & money</span><b>SafeZone, channel, 2% and 6%</b><p>Initial stop below the last two lows. It trails up with the SafeZone stop (2.5× the average 10-day penetration) and is never lowered. Take profit at the Autoenvelope line. Risk 2% per long, 1% per short, and stop trading for the month at a 6% drawdown.</p></div>
+      <div class="screen"><span class="eyebrow">Exits & money</span><b>SafeZone, channel, 2% and 6%</b><p>Initial stop below the last two lows. It trails up with the SafeZone stop (<span data-p="safezone_coef">2.5</span>× the average <span data-p="safezone_lookback">10</span>-day penetration) and is never lowered. Take profit at the Autoenvelope line. Risk <span data-p="risk_long" data-pct>2</span>% per long, <span data-p="risk_short" data-pct>1</span>% per short, and stop trading for the month at a <span data-p="monthly_loss_limit" data-pct>6</span>% drawdown.</p></div>
     </div>
     <div>
       <h3 style="margin-bottom:8px">Backtest of these exact rules · 5 years of daily data</h3>
@@ -154,7 +155,8 @@ footer p { max-width: 90ch; }
 const R = /*DATA*/null;
 const IMP = { "1": "Green", "-1": "Red", "0": "Blue" };
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const dp = k => ({ gold: 2, btc: 0, dji: 0, spx: 1, asx200: 1 })[k];
+const DEC = Object.fromEntries(R.instruments.map(m => [m.key, m.decimals ?? 2]));
+const dp = k => DEC[k];
 const fmt = (v, d = 2) => v == null ? "—" : Number(v).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
 const pct = (v, d = 0) => v == null ? "—" : (v * 100).toFixed(d) + "%";
 const sgn = (v, d = 2) => v == null ? "—" : (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(d);
@@ -162,10 +164,17 @@ const el = (tag, attrs = {}, ...kids) => { const e = document.createElement(tag)
 const SVGNS = "http://www.w3.org/2000/svg";
 const s = (tag, attrs = {}) => { const e = document.createElementNS(SVGNS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); return e; };
 
+document.querySelectorAll("[data-p]").forEach(e => { const v = R.params?.[e.dataset.p]; if (v != null) e.textContent = e.hasAttribute("data-pct") ? +(v * 100).toFixed(2) : v; });
+const run = R.run || {};
+const when = R.generated_at ? new Date(R.generated_at).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" }) + " UTC" : R.as_of;
 document.getElementById("meta").append(
-  el("span", { text: `As of ${R.as_of} · last completed daily bars` }),
-  el("span", { text: "Forecast horizon 30 bars" }),
-  el("span", { text: "Data: Yahoo Finance via GitHub Actions" }));
+  el("span", { text: `Run ${when}` }),
+  el("span", { text: { workflow_dispatch: "Started by hand on GitHub", schedule: "Scheduled run", push: "Started by a push", local: "Run locally" }[run.trigger] || "Run" }),
+  el("span", { text: run.fetched ? "Prices refetched from Yahoo Finance" : "Prices from stored data" }),
+  el("span", { text: `Forecast horizon ${R.params?.horizon_bars ?? 30} bars` }),
+  run.git_sha ? el("span", { class: "num", text: "commit " + run.git_sha }) : null);
+const stale = R.instruments.filter(m => m.freshness?.stale);
+if (stale.length) document.getElementById("meta").append(el("span", { class: "dn", text: `Stale data: ${stale.map(m => `${m.name} (last bar ${m.last_date})`).join(", ")}` }));
 
 // ---------- strip ----------
 const strip = document.getElementById("strip");
@@ -179,7 +188,8 @@ R.instruments.forEach(m => {
       el("span", { class: "chip c" + p.daily_impulse, text: "D " + IMP[p.daily_impulse] }),
       el("span", { class: "chip c0", style: "background:var(--grid);color:var(--ink-2)", text: m.score + "/8" })),
     el("div", { class: "action", text: p.action + (p.provisional ? ` · ${p.side === 1 ? "long" : "short"} bias` : "") }),
-    el("div", { class: "small muted", text: `P(higher in 30 bars) ${pct(m.forecast.p_up)}` })));
+    el("div", { class: "small muted", text: `P(higher in 30 bars) ${pct(m.forecast.p_up)}` }),
+    m.changes && m.changes.length && m.changes[0] !== "first run" ? el("div", { class: "small changed", text: "Changed: " + m.changes.join("; ") }) : null));
 });
 
 // ---------- backtest table ----------
@@ -245,7 +255,7 @@ R.instruments.forEach(m => {
   const bay = el("section", { class: "bay", id: m.key, "aria-labelledby": m.key + "-h" },
     el("div", { class: "bay-head" }, el("h2", { id: m.key + "-h", text: m.name }), el("span", { class: "px num", text: fmt(m.close, d) }),
       el("span", { class: (m.chg >= 0 ? "up" : "dn") + " num", text: sgn(m.chg * 100, 2) + "%" }), el("span", { class: "small muted", text: m.desc + " · " + m.unit })),
-    el("p", { class: "note-box", text: narrative(m) }),
+    el("p", { class: "note-box", text: narrative(m) + (m.changes && m.changes.length && m.changes[0] !== "first run" ? ` Since the last run: ${m.changes.join("; ")}.` : "") }),
     el("div", { class: "bay-body" }, chartbox, el("div", { class: "side" }, planCard, conf, fc, trig)));
   bays.append(bay);
   charts.push({ m, holder, tip });
