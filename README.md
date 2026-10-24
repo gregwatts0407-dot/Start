@@ -38,3 +38,7 @@ Levels are drawn as text maps at the top of `platformer/game.js`, so you can edi
 | `X`  | Stone block      | `e`  | Walking enemy  |
 | `-`  | One-way platform | `P`  | Player start   |
 | `^`  | Spikes           | `F`  | Goal flag      |
+
+# Stillness
+
+A full-stack guided meditation platform (Next.js + Supabase) in `stillness/`. See [`stillness/README.md`](stillness/README.md) for setup, demo accounts and deployment.

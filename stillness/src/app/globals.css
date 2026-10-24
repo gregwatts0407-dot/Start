@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 33% 97%;
+    --foreground: 222 45% 15%;
+    --card: 40 40% 99%;
+    --card-foreground: 222 45% 15%;
+    --popover: 40 40% 99%;
+    --popover-foreground: 222 45% 15%;
+    --primary: 222 47% 18%;
+    --primary-foreground: 40 40% 97%;
+    --secondary: 140 18% 90%;
+    --secondary-foreground: 150 24% 18%;
+    --muted: 38 26% 93%;
+    --muted-foreground: 222 14% 38%;
+    --accent: 38 40% 90%;
+    --accent-foreground: 30 40% 22%;
+    --destructive: 0 62% 44%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 36 20% 86%;
+    --input: 36 20% 82%;
+    --ring: 150 22% 40%;
+    --sage: 146 18% 46%;
+    --sage-foreground: 0 0% 100%;
+    --gold: 38 62% 52%;
+    --gold-foreground: 222 47% 14%;
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 224 45% 8%;
+    --foreground: 40 30% 94%;
+    --card: 224 38% 12%;
+    --card-foreground: 40 30% 94%;
+    --popover: 224 38% 12%;
+    --popover-foreground: 40 30% 94%;
+    --primary: 40 40% 92%;
+    --primary-foreground: 222 47% 14%;
+    --secondary: 150 14% 20%;
+    --secondary-foreground: 140 22% 86%;
+    --muted: 224 30% 16%;
+    --muted-foreground: 220 16% 70%;
+    --accent: 224 28% 20%;
+    --accent-foreground: 40 50% 86%;
+    --destructive: 0 62% 56%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 224 25% 20%;
+    --input: 224 25% 24%;
+    --ring: 146 24% 58%;
+    --sage: 146 22% 58%;
+    --sage-foreground: 222 47% 10%;
+    --gold: 40 70% 62%;
+    --gold-foreground: 222 47% 10%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
+  }
+
+  ::selection {
+    background: hsl(var(--gold) / 0.3);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
