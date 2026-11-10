@@ -1135,6 +1135,21 @@
         drawRocket(rx, by, RH, throttle);
       }
       drawPad();
+      // engine light spilling over the pad while the rocket is still close to it
+      var spill = throttle * clamp(1 - alt / (RH * 0.9), 0, 1);
+      if (spill > 0.01) {
+        var fl = 0.8 + 0.2 * Math.sin(time * 53);
+        var gr = RH * (0.16 + 0.3 * spill) * fl;
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        var sg = ctx.createRadialGradient(rx, by, 0, rx, by, gr);
+        sg.addColorStop(0, 'rgba(255,244,214,' + 0.95 * spill + ')');
+        sg.addColorStop(0.25, 'rgba(255,190,110,' + 0.6 * spill + ')');
+        sg.addColorStop(1, 'rgba(255,110,60,0)');
+        ctx.fillStyle = sg;
+        ctx.beginPath(); ctx.ellipse(rx, by, gr * 1.5, gr * 0.75, 0, 0, 6.283); ctx.fill();
+        ctx.restore();
+      }
       drawSmoke(true);
       drawSparks();
       ctx.restore();

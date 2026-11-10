@@ -370,7 +370,6 @@ body.launched .readout, body.launched .summary, body.launched .plan { display: n
   .summary .extra { display: none; }
   body.launching .readout, body.launching .summary, body.launching .plan { opacity: 0.22; }
   .actions { left: 16px; right: 16px; justify-content: center; }
-  .btn { box-shadow: 0 10px 30px -8px rgba(255, 107, 74, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 0 6px rgba(7, 11, 31, 0.55); }
   body.launched .actions { justify-content: flex-start; }
 
   /* phone readout: big number left, label and clock stacked beside it */
