@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070b1f">
+<title>Holiday Launch Countdown</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b1230'/%3E%3Cpath d='M16 4c4 4 5 9 5 14H11c0-5 1-10 5-14z' fill='%23fdf3e3'/%3E%3Cpath d='M11 18l-4 6h6zM21 18l4 6h-6z' fill='%23ff6b4a'/%3E%3Cpath d='M13.5 19h5l-2.5 8z' fill='%23ffc46b'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="scene" aria-hidden="true"></canvas>
+
+<main class="hud">
+  <header class="top">
+    <p class="brand"><span class="brand-mark" aria-hidden="true"></span>Mission <strong>Holiday</strong></p>
+    <button id="sound" class="icon-btn" type="button" aria-pressed="true" aria-label="Launch sound">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z" fill="currentColor" stroke="none"/>
+        <path class="wave" d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.8 7.8 0 0 1 0 11"/>
+        <path class="mute" d="M16 9.5l5 5M21 9.5l-5 5"/>
+      </svg>
+    </button>
+  </header>
+
+  <section class="count" aria-labelledby="title">
+    <h1 id="title" class="sr-only">Weekday countdown to the holidays</h1>
+
+    <p class="status" id="status" data-state="counting" aria-live="polite">
+      <span class="dot" aria-hidden="true"></span><span id="statusText">T-minus, counting</span>
+    </p>
+
+    <div class="readout" id="readout" role="timer" aria-live="off">
+      <div class="hero">
+        <span class="hero-num" id="heroNum">--</span>
+        <span class="hero-lbl" id="heroLbl">weekdays <br>to launch</span>
+      </div>
+      <div class="clock" id="clock" aria-hidden="true">
+        <div class="seg"><span class="digits" id="hh">--</span><span class="lbl">hours</span></div>
+        <span class="colon">:</span>
+        <div class="seg"><span class="digits" id="mm">--</span><span class="lbl">minutes</span></div>
+        <span class="colon">:</span>
+        <div class="seg"><span class="digits" id="ss">--</span><span class="lbl">seconds</span></div>
+      </div>
+    </div>
+
+    <div class="liftoff" id="liftoff" hidden>
+      <p class="liftoff-kicker">Liftoff confirmed</p>
+      <p class="liftoff-title">Holidays<br>are go.</p>
+      <p class="liftoff-sub" id="liftoffSub">Every weekday is behind you. Enjoy the ride.</p>
+    </div>
+
+    <p class="summary" id="summary"></p>
+
+    <div class="plan" id="planWrap">
+      <div class="plan-head">
+        <span>Flight plan</span>
+        <span class="legend">
+          <i class="k done"></i>flown <i class="k today"></i>today <i class="k todo"></i>to go
+        </span>
+      </div>
+      <div class="plan-body">
+        <div class="plan-days" aria-hidden="true"><span></span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span></div>
+        <div class="plan-grid" id="plan" role="img"></div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="launch" class="btn" type="button">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 2c3.2 3 4.5 6.8 4.5 11h-9C7.500 8.800 8.800 5 12 2zM7.500 13L4 18h4.500zM16.500 13L20 18h-4.500zM10 14.500h4L12 22z" fill="currentColor"/></svg>
+        <span id="launchText">Run a test launch</span>
+      </button>
+    </div>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

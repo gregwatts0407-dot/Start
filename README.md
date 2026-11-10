@@ -42,3 +42,13 @@ Levels are drawn as text maps at the top of `platformer/game.js`, so you can edi
 # Stillness
 
 A full-stack guided meditation platform (Next.js + Supabase) in `stillness/`. See [`stillness/README.md`](stillness/README.md) for setup, demo accounts and deployment.
+
+# Holiday Launch Countdown
+
+A weekday-only countdown to the holidays (12 December) in `countdown/`, with a rocket that launches when the clock reaches zero. Plain HTML, CSS and JavaScript. Open `countdown/index.html`.
+
+- The clock only runs Monday to Friday. Saturdays and Sundays are skipped, and on a weekend the clock shows a hold until Monday.
+- The big number is the whole weekdays left, with the hours, minutes and seconds of weekday time beside it. The flight plan marks each remaining weekday.
+- At zero the rocket launches on its own. **Run a test launch** plays the animation any time; the speaker button mutes the rumble.
+- From 12 December until the new year the page shows the rocket in flight, then it starts counting to the next 12 December.
+- To try other moments, add `?demo=12` (twelve seconds before launch) or `?now=2026-11-14T10:00` (any local date and time) to the address.
