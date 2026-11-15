@@ -1,0 +1,36 @@
+@font-face{font-family:"EBG";src:url(FONT400N) format("woff2");font-weight:400;font-style:normal}
+@font-face{font-family:"EBG";src:url(FONT400I) format("woff2");font-weight:400;font-style:italic}
+@font-face{font-family:"EBG";src:url(FONT600N) format("woff2");font-weight:600;font-style:normal}
+@font-face{font-family:"EBG";src:url(FONT600I) format("woff2");font-weight:600;font-style:italic}
+@page{size:6in 9in;margin:0.8in 0.7in 0.85in 0.7in}
+html{font-size:11.2pt}
+body{font-family:"EBG","Liberation Serif",Georgia,serif;line-height:1.42;color:#111;margin:0;font-variant-numeric:oldstyle-nums;hyphens:auto;-webkit-hyphens:auto}
+p{margin:0;text-indent:1.4em;text-align:justify;orphans:2;widows:2}
+h1+p,h2+p,h3+p,hr+p,.parttitle+h2+p,p.first{text-indent:0}
+hr{border:0;text-align:center;margin:0.9em 0;height:1.2em;page-break-after:avoid}
+hr::after{content:"\2042";font-size:1em;letter-spacing:.2em;color:#555}
+h1.part{page-break-before:always;break-before:page;text-align:center;font-weight:400;letter-spacing:.35em;font-size:1rem;margin:2.6in 0 .3in;text-transform:uppercase}
+.parttitle{text-align:center;page-break-after:always;break-after:page}
+.parttitle p{text-indent:0;text-align:center;font-size:1.9rem;line-height:1.2;margin-bottom:.4em;font-style:normal}
+.parttitle p em{font-size:1rem;display:block;margin-top:.6em}
+.parttitle p:nth-child(2){font-size:1rem;font-style:italic}
+h2{page-break-before:always;break-before:page;font-weight:400;font-size:1.35rem;text-align:center;margin:1.1in 0 .5in;line-height:1.25}
+h2.note{font-style:italic}
+h2 + p::first-line{font-variant:small-caps;letter-spacing:.03em}
+blockquote{margin:.8em 1.6em;font-style:normal}
+strong{font-weight:600}
+.titlepage{page-break-after:always;text-align:center;padding-top:2.2in}
+.titlepage .t{font-size:2.5rem;line-height:1.1;letter-spacing:.02em}
+.titlepage .s{font-style:italic;margin-top:.5em;font-size:1.1rem}
+.titlepage .d{margin-top:2.2in;font-size:.9rem;letter-spacing:.25em;text-transform:uppercase}
+.epi{page-break-after:always;padding-top:2.4in;text-align:center;font-style:italic}
+.epi p{text-indent:0;text-align:center}
+nav#TOC{page-break-after:always}
+nav#TOC h2{page-break-before:avoid;margin-top:.6in}
+nav#TOC ul{list-style:none;padding-left:0;margin:0}
+nav#TOC>ul>li{margin-top:.55em}
+nav#TOC ul ul{padding-left:1.2em;font-size:.92rem}
+nav#TOC a{color:#111;text-decoration:none}
+@media screen{body{max-width:34em;margin:2em auto;padding:0 16px;background:#fbf9f4}h1.part{margin-top:3em}h2{margin-top:3em}}
+h1:not(.part){page-break-before:always;break-before:page;font-weight:400;font-size:1.5rem;text-align:center;margin:1.1in 0 .5in}
+h1:not(.part) + p::first-line{font-variant:small-caps;letter-spacing:.03em}
