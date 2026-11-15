@@ -20,4 +20,4 @@ And he did not report speech as other people do. He would not put on a voice, or
 
 His times are from his own wristwatch, which he had set by the wireless that morning. He was never inside the house and never saw one of its clocks. So he is the only witness of the seven whose midnight is England's midnight. When you set him beside the last account, you will see what that does.
 
-He believed until the end of his life that he had killed Edmund Vane. He did not put that in the story. He said it to me once only, in a hospital, and I could not then tell him what I knew.
+He believed until the end of his life that he had killed Edmund Vane. He did not put that in the story. He said it to me once only, in a hospital, and by the time I had told him what I knew he was past hearing it.

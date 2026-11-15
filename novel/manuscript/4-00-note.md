@@ -10,7 +10,7 @@ The Turn of the Tide
 
 In the autumn of 1998 a firm that published paperback romances, two a month, with a rose on the spine, brought out a short novel called *The Turn of the Tide* by Margaret Wade. It sold about as well as the others. It was set at a house called Vespers on an island in the Essex marshes, and it told how a woman named Isobel, after twenty years, crossed the sea at night on a grey horse behind a man named Daniel.
 
-Margaret Wade was Imogen Vane. She told nobody. I learned of it only when I was going through her desk this year, after she died, and found the contract, the six author's copies still in their wrapper, and beneath them the typescript.
+Margaret Wade was Imogen Vane. She told nobody. I learned of it only this year, a few weeks before she died, when she sent me to the bottom drawer of her desk for a parcel. It held the contract, the six author's copies still in their wrapper, and beneath them the typescript.
 
 The typescript has the real names. She had written it with them, straight through, and changed them afterwards in ink for the printer: *Imogen* struck out and *Isobel* written above, *Tom* made *Daniel*, *Compline* made *Vespers*. I have gone back to what she first wrote. I have also put back her sixth chapter. The publishers cut it. There is a letter from an editor explaining, quite kindly, that a scene between the heroine and her brother in a scullery was felt to be out of key with the list and to cast a shadow on the ending, and asking whether the brother might not simply give his blessing at the door. She agreed. In the printed book he gives his blessing at the door. What follows is what she wrote first.
 
