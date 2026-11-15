@@ -1,6 +1,6 @@
 # A Note on the Time
 
-There were fifteen people on Compline Ness on the night of Saturday the twenty-second of October, 1994, and by the following Monday there were fourteen. Seven of those who were there have left an account of it. This book is those seven accounts, in the order in which I think they should be read, which is not the order in which they were written and not the order in which I found them.
+There were sixteen people on Compline Ness on the night of Saturday the twenty-second of October, 1994, and by the following Monday there were fifteen. Seven of those who were there have left an account of it. This book is those seven accounts, in the order in which I think they should be read, which is not the order in which they were written and not the order in which I found them.
 
 I should say at the beginning what you are going to notice in any case. The accounts do not agree.
 
