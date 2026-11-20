@@ -1049,6 +1049,26 @@
     renderSeat(seat);
   }
 
+  // Ask for a second click before a destructive action.
+  function confirmClick(btn, prompt, action) {
+    if (btn.dataset.armed) {
+      clearTimeout(Number(btn.dataset.armed));
+      delete btn.dataset.armed;
+      btn.classList.remove('armed');
+      btn.innerHTML = btn.dataset.label;
+      action();
+      return;
+    }
+    btn.dataset.label = btn.innerHTML;
+    btn.innerHTML = prompt;
+    btn.classList.add('armed');
+    btn.dataset.armed = String(setTimeout(() => {
+      delete btn.dataset.armed;
+      btn.classList.remove('armed');
+      btn.innerHTML = btn.dataset.label;
+    }, 4000));
+  }
+
   function shake(el) {
     if (!el) return;
     el.classList.remove('shake');
@@ -2207,12 +2227,11 @@
 
     const reset = h('div', 'row', '<div class="row-label"><strong>Reset statistics</strong><span>Clears history for every player. Bankrolls are kept.</span></div>');
     const rb = h('button', 'ghost', `${icon('refresh')}Reset`);
-    rb.addEventListener('click', () => {
-      if (!confirm('Reset statistics for every player?')) return;
+    rb.addEventListener('click', () => confirmClick(rb, 'Click again to reset', () => {
       S.seats.forEach(x => { x.stats = newStats(r2(x.bankroll + x.bets.main + x.bets.pp + x.bets.t3)); });
       saveGame();
       renderStats(body);
-    });
+    }));
     reset.appendChild(rb);
     reset.style.marginTop = '12px';
     body.appendChild(reset);
@@ -2348,10 +2367,13 @@
     $('#addHuman').addEventListener('click', () => addDraftSeat('human'));
     $('#addCpu').addEventListener('click', () => addDraftSeat('cpu'));
     $('#lobbyStart').addEventListener('click', () => startFromLobby(false));
-    $('#lobbyNew').addEventListener('click', () => {
-      if (S.seats.length && !confirm('Start a new game? Every bankroll and statistic is reset.')) return;
-      draft.seats.forEach(s => { s.existing = false; });
-      startFromLobby(true);
+    $('#lobbyNew').addEventListener('click', ev => {
+      const go = () => {
+        draft.seats.forEach(s => { s.existing = false; });
+        startFromLobby(true);
+      };
+      if (!S.seats.length && !draft.saved) go();
+      else confirmClick(ev.currentTarget, 'Reset all bankrolls?', go);
     });
     dom.table.addEventListener('click', () => { if (S.skip) S.skip(); });
     window.addEventListener('resize', scheduleLayout);

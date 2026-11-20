@@ -59,3 +59,5 @@ A casino blackjack table for one to five players in `blackjack/`, written in pla
 Keyboard: `1`–`6` add chips, `Space` deals (or repeats your last bet), `H` `S` `D` `P` `R` hit, stand, double, split and surrender, `G` shows a hint, `Y`/`N` answer insurance, and `M` mutes.
 
 Run the rules-engine tests with `node blackjack/tests/engine.test.js`.
+
+To host it on Vercel, import this repository, set **Root Directory** to `blackjack` and **Framework Preset** to *Other*, then deploy. It's a static site, so there's no build command.

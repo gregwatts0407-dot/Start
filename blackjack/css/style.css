@@ -63,8 +63,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
 .app {
-  height: 100vh;
-  height: 100dvh;
+  height: 100%;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   grid-template-columns: minmax(0, 1fr);
@@ -1216,3 +1215,4 @@ body.compact .discard, body.compact .shoe { margin-top: 4px; gap: 4px; }
 body.compact .discard-stack, body.compact .shoe-body { height: calc(var(--cw) * 0.6); }
 body.compact .act kbd, body.compact .chip-tray .chip kbd { display: none; }
 body.compact .stack-amount { font-size: 10px; padding: 1px 6px; }
+.ghost.armed { color: #ffb4a8; border-color: rgba(255, 120, 100, 0.6); border-style: solid; background: rgba(255, 90, 70, 0.1); }
