@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b2a1d">
+  <title>Blackjack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230f5b3a'/%3E%3Cpath fill='%23f1d48a' d='M50 14c4 8 34 28 34 48 0 11-8 18-18 18-6 0-11-3-13-7 1 7 3 12 8 16H39c5-4 7-9 8-16-2 4-7 7-13 7-10 0-18-7-18-18 0-20 30-40 34-48z'/%3E%3C/svg%3E">
+</head>
+<body data-felt="emerald" data-back="crimson">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="suit-S" viewBox="0 0 100 100"><path d="M50 3C55 14 95 38 95 63c0 14-11 23-23 23-8 0-15-4-18-10 1 9 4 15 11 21H35c7-6 10-12 11-21-3 6-10 10-18 10C16 86 5 77 5 63 5 38 45 14 50 3z"/></symbol>
+      <symbol id="suit-H" viewBox="0 0 100 100"><path d="M50 95C45 88 5 62 5 32 5 16 17 5 30.5 5 39.5 5 46.5 10.5 50 19 53.5 10.5 60.5 5 69.5 5 83 5 95 16 95 32c0 30-40 56-45 63z"/></symbol>
+      <symbol id="suit-D" viewBox="0 0 100 100"><path d="M50 2c11 17 25 33 42 48-17 15-31 31-42 48C39 81 25 65 8 50 25 35 39 19 50 2z"/></symbol>
+      <symbol id="suit-C" viewBox="0 0 100 100"><path d="M50 4a21 21 0 0 1 17.6 32.5A21 21 0 1 1 55 72c1 10 4 16 11 23H34c7-7 10-13 11-23a21 21 0 1 1-12.6-35.5A21 21 0 0 1 50 4z"/></symbol>
+
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+      <symbol id="i-stats" viewBox="0 0 24 24"><path d="M3 21h18M6 17v-6M11 17V5M16 17v-9M21 17v-4"/></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></symbol>
+      <symbol id="i-sound" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></symbol>
+      <symbol id="i-mute" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="m16 9.5 5 5M21 9.5l-5 5"/></symbol>
+      <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 1 1 3.6 2.3c-.7.4-1.2 1-1.2 1.8v.5"/><path d="M12 17h.01"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2c2.1.7 3.5 2.8 3.5 5.8"/></symbol>
+      <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3z"/></symbol>
+      <symbol id="i-hit" viewBox="0 0 24 24"><rect x="5" y="3" width="11" height="15" rx="2"/><path d="M19 13v8M15 17h8"/></symbol>
+      <symbol id="i-stand" viewBox="0 0 24 24"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11M11 10.5V4a1.5 1.5 0 0 1 3 0v6.5M14 10.5V5.5a1.5 1.5 0 0 1 3 0V12"/><path d="M17 9.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1.6a6 6 0 0 1-4.7-2.3l-3.2-4.2a1.6 1.6 0 0 1 2.5-2L8 13.5"/></symbol>
+      <symbol id="i-double" viewBox="0 0 24 24"><rect x="3" y="7" width="11" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3"/></symbol>
+      <symbol id="i-split" viewBox="0 0 24 24"><path d="M12 21v-8L5 6M12 13l7-7M4 10V5h5M20 10V5h-5"/></symbol>
+      <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h12l-2.5 4.5L17 13H5"/></symbol>
+      <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></symbol>
+      <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5z"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4.5 6v5.5c0 4.6 3.1 8.3 7.5 9.5 4.4-1.2 7.5-4.9 7.5-9.5V6z"/></symbol>
+      <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></symbol>
+      <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5L4 8M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5L20 16M20 20v-4h-4"/></symbol>
+    </defs>
+  </svg>
+
+  <div id="app" class="app">
+    <header class="topbar">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 100 100" aria-hidden="true"><use href="#suit-S"/></svg>
+        <div class="brand-text">
+          <span class="brand-name">Blackjack</span>
+          <span class="brand-sub" id="tableInfo">$10 – $1,000 · 6 decks</span>
+        </div>
+      </div>
+      <button class="count-pill" id="countPill" hidden title="Hi-Lo count (toggle in Settings)">
+        <span><b>RC</b> <i id="rc">0</i></span>
+        <span><b>TC</b> <i id="tc">0.0</i></span>
+        <span class="count-decks"><i id="decksLeft">6.0</i> decks</span>
+      </button>
+      <nav class="top-actions" aria-label="Game menu">
+        <button class="icon-btn" id="btnLobby" title="Players & table" aria-label="Players and table"><svg><use href="#i-users"/></svg></button>
+        <button class="icon-btn" id="btnStats" title="Statistics" aria-label="Statistics"><svg><use href="#i-stats"/></svg></button>
+        <button class="icon-btn" id="btnHelp" title="How to play & strategy" aria-label="How to play"><svg><use href="#i-help"/></svg></button>
+        <button class="icon-btn" id="btnSound" title="Sound (M)" aria-label="Toggle sound"><svg><use href="#i-sound"/></svg></button>
+        <button class="icon-btn" id="btnSettings" title="Settings" aria-label="Settings"><svg><use href="#i-settings"/></svg></button>
+      </nav>
+    </header>
+
+    <main class="table" id="table">
+      <div class="felt-print" aria-hidden="true">
+        <svg viewBox="0 36 1000 184" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <path id="arcText" d="M 120 40 Q 500 250 880 40"/>
+            <path id="arcBandTop" d="M 175 70 Q 500 255 825 70"/>
+            <path id="arcBandBot" d="M 200 100 Q 500 275 800 100"/>
+            <path id="arcSmall" d="M 230 128 Q 500 290 770 128"/>
+          </defs>
+          <text class="fp-main"><textPath href="#arcText" startOffset="50%" text-anchor="middle" id="fpPayout">BLACKJACK PAYS 3 TO 2</textPath></text>
+          <use href="#arcBandTop" class="fp-line"/>
+          <use href="#arcBandBot" class="fp-line"/>
+          <text class="fp-band"><textPath href="#arcBandBot" startOffset="50%" text-anchor="middle" dy="-9" id="fpInsurance">INSURANCE PAYS 2 TO 1</textPath></text>
+          <text class="fp-small"><textPath href="#arcSmall" startOffset="50%" text-anchor="middle" id="fpDealer">Dealer must stand on all 17s</textPath></text>
+        </svg>
+      </div>
+
+      <section class="dealer-zone">
+        <div class="discard" id="discard" aria-label="Discard tray">
+          <div class="discard-stack" id="discardStack"></div>
+          <span class="zone-label">Discards</span>
+        </div>
+
+        <div class="dealer">
+          <div class="rack" id="rack" aria-hidden="true"></div>
+          <div class="dealer-hand-wrap">
+            <div class="hand dealer-hand" id="dealerHand"><div class="hand-cards"></div></div>
+            <div class="total-badge dealer-total" id="dealerTotal" hidden></div>
+          </div>
+        </div>
+
+        <div class="shoe" id="shoe" aria-label="Shoe">
+          <div class="shoe-body">
+            <div class="shoe-mouth" id="shoeMouth"><div class="shoe-card"></div></div>
+          </div>
+          <div class="shoe-meter" title="Cards remaining before the cut card">
+            <div class="shoe-fill" id="shoeFill"></div>
+            <div class="shoe-cut" id="shoeCut"></div>
+          </div>
+          <span class="zone-label" id="shoeLabel">312 cards</span>
+        </div>
+      </section>
+
+      <div class="banner-wrap">
+        <div class="banner" id="banner" role="status" aria-live="polite">
+          <span class="banner-title" id="bannerTitle"></span>
+          <span class="banner-sub" id="bannerSub"></span>
+        </div>
+      </div>
+
+      <section class="seats" id="seats" aria-label="Players"></section>
+    </main>
+
+    <footer class="dock" id="dock">
+      <div class="dock-player" id="dockPlayer"></div>
+      <div class="dock-center">
+        <div class="dock-panel" id="panelBet" hidden>
+          <div class="chip-tray" id="chipTray" role="group" aria-label="Chips"></div>
+          <div class="bet-actions">
+            <button class="ctl" id="btnUndo" title="Undo last chip (Backspace)"><svg><use href="#i-undo"/></svg><span>Undo</span></button>
+            <button class="ctl" id="btnClear" title="Clear bets (C)"><svg><use href="#i-trash"/></svg><span>Clear</span></button>
+            <button class="ctl" id="btnRebet" title="Repeat last bets (R)"><svg><use href="#i-repeat"/></svg><span>Rebet</span></button>
+            <button class="ctl" id="btnRebet2" title="Repeat last bets doubled (X)"><b class="x2">2×</b><span>Rebet</span></button>
+            <button class="act act-deal" id="btnDeal" title="Deal (Space)"><svg><use href="#i-play"/></svg><span>Deal</span><kbd>Space</kbd></button>
+          </div>
+        </div>
+
+        <div class="dock-panel" id="panelPlay" hidden>
+          <div class="play-actions">
+            <button class="act act-hit" data-action="H"><svg><use href="#i-hit"/></svg><span>Hit</span><kbd>H</kbd></button>
+            <button class="act act-stand" data-action="S"><svg><use href="#i-stand"/></svg><span>Stand</span><kbd>S</kbd></button>
+            <button class="act act-double" data-action="D"><svg><use href="#i-double"/></svg><span>Double</span><kbd>D</kbd></button>
+            <button class="act act-split" data-action="P"><svg><use href="#i-split"/></svg><span>Split</span><kbd>P</kbd></button>
+            <button class="act act-surrender" data-action="R"><svg><use href="#i-flag"/></svg><span>Surrender</span><kbd>R</kbd></button>
+          </div>
+          <button class="ctl hint-btn" id="btnHint" title="Strategy hint (G)"><svg><use href="#i-bulb"/></svg><span>Hint</span></button>
+        </div>
+
+        <div class="dock-panel" id="panelInsurance" hidden>
+          <div class="ins-question">
+            <svg><use href="#i-shield"/></svg>
+            <div><strong id="insTitle">Insurance?</strong><span id="insSub">Costs $5 · pays 2 to 1</span></div>
+          </div>
+          <div class="play-actions">
+            <button class="act act-yes" id="btnInsYes"><svg><use href="#i-check"/></svg><span id="insYesLabel">Insure</span><kbd>Y</kbd></button>
+            <button class="act act-no" id="btnInsNo"><svg><use href="#i-x"/></svg><span>No thanks</span><kbd>N</kbd></button>
+          </div>
+        </div>
+
+        <div class="dock-panel" id="panelWait" hidden>
+          <div class="wait-msg" id="waitMsg"></div>
+        </div>
+      </div>
+      <div class="dock-meta" id="dockMeta"></div>
+    </footer>
+
+    <div class="fx-layer" id="fx" aria-hidden="true"></div>
+    <div class="toasts" id="toasts" aria-live="polite"></div>
+  </div>
+
+  <!-- Lobby -->
+  <div class="modal lobby" id="lobby" hidden>
+    <div class="lobby-card" role="dialog" aria-modal="true" aria-labelledby="lobbyTitle">
+      <div class="lobby-hero" aria-hidden="true" id="lobbyHero"></div>
+      <h1 id="lobbyTitle" class="lobby-title">Blackjack</h1>
+      <p class="lobby-sub">A table for up to five. Play solo, with friends on this device, or with computer players.</p>
+
+      <div class="lobby-section">
+        <div class="section-head">
+          <h2>Players</h2>
+          <span class="hint-text" id="seatCount">1 of 5 seats</span>
+        </div>
+        <ol class="seat-list" id="seatList"></ol>
+        <div class="seat-add">
+          <button class="ghost" id="addHuman"><svg><use href="#i-person"/></svg>Add player</button>
+          <button class="ghost" id="addCpu"><svg><use href="#i-cpu"/></svg>Add computer</button>
+        </div>
+      </div>
+
+      <div class="lobby-grid">
+        <div class="lobby-section">
+          <h2>Starting bankroll</h2>
+          <div class="seg" id="segBankroll" role="radiogroup"></div>
+        </div>
+        <div class="lobby-section">
+          <h2>Table limits</h2>
+          <div class="seg" id="segLimits" role="radiogroup"></div>
+        </div>
+      </div>
+
+      <p class="lobby-note" id="lobbyNote"></p>
+      <div class="lobby-actions">
+        <button class="ghost" id="lobbyNew" hidden>New game</button>
+        <button class="primary big" id="lobbyStart"><span id="lobbyStartLabel">Take a seat</span><svg><use href="#i-play"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generic sheet modal (settings, stats, help) -->
+  <div class="modal sheet-modal" id="sheet" hidden>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <header class="sheet-head">
+        <h2 id="sheetTitle">Settings</h2>
+        <div class="tabs" id="sheetTabs" role="tablist"></div>
+        <button class="icon-btn" id="sheetClose" aria-label="Close"><svg><use href="#i-x"/></svg></button>
+      </header>
+      <div class="sheet-body" id="sheetBody"></div>
+    </div>
+  </div>
+
+  <script src="js/engine.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

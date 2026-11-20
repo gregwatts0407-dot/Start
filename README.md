@@ -42,3 +42,20 @@ Levels are drawn as text maps at the top of `platformer/game.js`, so you can edi
 # Stillness
 
 A full-stack guided meditation platform (Next.js + Supabase) in `stillness/`. See [`stillness/README.md`](stillness/README.md) for setup, demo accounts and deployment.
+
+# Blackjack
+
+A casino blackjack table for one to five players in `blackjack/`, written in plain HTML, CSS and JavaScript with no build step. Open `blackjack/index.html` to play.
+
+- **Players:** up to five seats. Each seat is a human (hot-seat on one device) or a computer player. "Pro" bots play perfect basic strategy and "casual" bots make the odd mistake. Seats are dealt right to left, like a real table.
+- **Full rules:** hit, stand, double, split (up to four hands), late surrender, insurance and even money. The dealer checks for Blackjack when showing an Ace or a 10, and naturals are paid straight away.
+- **Side bets:** Perfect Pairs and 21+3.
+- **Configurable table:** 1–8 decks, dealer hits or stands on soft 17, 3:2 or 6:5 Blackjack, double restrictions, double after split, re-splitting and hitting split aces, cut-card position, and four table limits.
+- **Learning tools:** a hint button, an optional coach that flags plays that differ from basic strategy, a strategy chart generated for the current rules, and a Hi-Lo counting trainer.
+- **Statistics:** per-player win rate, net result, Blackjacks, streaks, strategy accuracy and a bankroll chart.
+- **Presentation:** cards, chips and the table are drawn in CSS/SVG and animated, and sound effects are synthesised with Web Audio. You can choose the felt colour, card backs and a four-colour deck. It works on desktop, tablet and phone, in portrait or landscape.
+- Progress and settings are saved in the browser.
+
+Keyboard: `1`–`6` add chips, `Space` deals (or repeats your last bet), `H` `S` `D` `P` `R` hit, stand, double, split and surrender, `G` shows a hint, `Y`/`N` answer insurance, and `M` mutes.
+
+Run the rules-engine tests with `node blackjack/tests/engine.test.js`.
