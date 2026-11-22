@@ -42,6 +42,15 @@
       <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></symbol>
       <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></symbol>
       <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-cap" viewBox="0 0 24 24"><path d="M2 9.5 12 5l10 4.5-10 4.5z"/><path d="M6 11.6V16c0 1.6 2.7 3 6 3s6-1.4 6-3v-4.4M21.5 9.7V15"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></symbol>
+      <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+      <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></symbol>
+      <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+      <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+      <symbol id="i-whistle" viewBox="0 0 24 24"><path d="M4 13a5 5 0 1 0 10 0V9h7V6H9a5 5 0 0 0-5 5z"/><circle cx="9" cy="13" r="1.5"/></symbol>
       <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5L4 8M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5L20 16M20 20v-4h-4"/></symbol>
     </defs>
   </svg>
@@ -61,6 +70,7 @@
         <span class="count-decks"><i id="decksLeft">6.0</i> decks</span>
       </button>
       <nav class="top-actions" aria-label="Game menu">
+        <button class="icon-btn academy-btn" id="btnAcademy" title="Academy: learn the game" aria-label="Academy"><svg><use href="#i-cap"/></svg><span>Academy</span></button>
         <button class="icon-btn" id="btnLobby" title="Players & table" aria-label="Players and table"><svg><use href="#i-users"/></svg></button>
         <button class="icon-btn" id="btnStats" title="Statistics" aria-label="Statistics"><svg><use href="#i-stats"/></svg></button>
         <button class="icon-btn" id="btnHelp" title="How to play & strategy" aria-label="How to play"><svg><use href="#i-help"/></svg></button>
@@ -123,6 +133,19 @@
     </main>
 
     <footer class="dock" id="dock">
+      <div class="coach-rail tip" id="coachRail" hidden aria-live="polite">
+        <div class="coach-avatar" aria-hidden="true"><svg><use href="#i-whistle"/></svg></div>
+        <div class="coach-body">
+          <span class="coach-label" id="coachLabel">Coach</span>
+          <p class="coach-text" id="coachText"></p>
+          <p class="coach-more" id="coachMore" hidden></p>
+        </div>
+        <div class="coach-actions">
+          <button class="coach-btn" id="coachWhy" aria-expanded="false" hidden><span id="coachWhyLabel">Why?</span></button>
+          <button class="coach-btn practice" id="coachPractice" hidden><svg><use href="#i-target"/></svg><span>Practise</span></button>
+          <button class="coach-btn icon" id="coachSettings" title="Coach settings" aria-label="Coach settings"><svg><use href="#i-settings"/></svg></button>
+        </div>
+      </div>
       <div class="dock-player" id="dockPlayer"></div>
       <div class="dock-center">
         <div class="dock-panel" id="panelBet" hidden>
@@ -199,6 +222,20 @@
         </div>
       </div>
 
+      <div class="lobby-section lobby-coach">
+        <h2>Coaching</h2>
+        <div class="coach-pick">
+          <div class="seg" id="segCoach" role="radiogroup" aria-label="Coaching"></div>
+          <span class="hint-text" id="coachNote"></span>
+        </div>
+      </div>
+
+      <button class="academy-cta" id="lobbyAcademy">
+        <span class="academy-cta-icon"><svg><use href="#i-cap"/></svg></span>
+        <span class="academy-cta-text"><strong>Blackjack Academy</strong><span>Learn the rules, strategy and card counting with short lessons and drills.</span></span>
+        <svg class="academy-cta-arrow"><use href="#i-arrow-right"/></svg>
+      </button>
+
       <p class="lobby-note" id="lobbyNote"></p>
       <div class="lobby-actions">
         <button class="ghost" id="lobbyNew" hidden>New game</button>
@@ -221,6 +258,8 @@
 
   <script src="js/engine.js"></script>
   <script src="js/audio.js"></script>
+  <script src="js/teach.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/academy.js"></script>
 </body>
 </html>

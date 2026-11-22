@@ -83,7 +83,7 @@
     showTotals: true,
     hintsEnabled: true,
     autoHints: false,
-    coach: true,
+    coachMode: 'guide',
     showCount: false,
   });
 
@@ -154,7 +154,10 @@
     try {
       const raw = JSON.parse(localStorage.getItem(SETTINGS_KEY) || 'null');
       const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      return Object.assign({}, DEFAULT_SETTINGS, reduced ? { speed: 'fast' } : {}, raw || {});
+      const st = Object.assign({}, DEFAULT_SETTINGS, reduced ? { speed: 'fast' } : {}, raw || {});
+      if (raw && raw.coach === false && !raw.coachMode) st.coachMode = 'off';
+      delete st.coach;
+      return st;
     } catch (e) { return Object.assign({}, DEFAULT_SETTINGS); }
   }
   function saveSettings() {
@@ -1076,6 +1079,204 @@
     el.classList.add('shake');
   }
 
+  // ---------------------------------------------------------------------------
+  // In-play coach
+  // ---------------------------------------------------------------------------
+  const T = window.Teach;
+  const coach = { tip: Math.floor(Math.random() * 8), streak: 0, n: 0, ok: 0, note: '', mistakes: new Map(), warnedBet: false };
+  const coachMode = () => S.settings.coachMode || 'guide';
+  const coachOn = () => coachMode() !== 'off' && humans().length > 0;
+  const guiding = () => coachMode() === 'guide' && humans().length > 0;
+
+  function coachSay(html, opts) {
+    const o = opts || {};
+    const rail = $('#coachRail');
+    if (!coachOn() && !o.force) { rail.hidden = true; return; }
+    // Low-priority commentary never covers a correction the player hasn't had time to read.
+    if (o.low && Date.now() < (coach.holdUntil || 0)) return;
+    coach.holdUntil = o.tone === 'bad' ? Date.now() + 4500 : o.hold ? Date.now() + o.hold : 0;
+    const wasHidden = rail.hidden;
+    rail.hidden = false;
+    rail.className = 'coach-rail ' + (o.tone || 'tip');
+    $('#coachLabel').textContent = o.label || 'Coach';
+    const note = coach.note && o.withNote ? `<span class="coach-note">${coach.note}</span>` : '';
+    if (o.withNote) coach.note = '';
+    $('#coachText').innerHTML = note + html;
+    const more = $('#coachMore');
+    more.hidden = true;
+    more.innerHTML = o.detail || '';
+    const why = $('#coachWhy');
+    why.hidden = !o.detail;
+    why.setAttribute('aria-expanded', 'false');
+    $('#coachWhyLabel').textContent = 'Why?';
+    const prac = $('#coachPractice');
+    prac.hidden = !o.practice;
+    prac.dataset.key = o.practice || '';
+    if (!wasHidden) rail.animate([{ filter: 'brightness(1.35)' }, { filter: 'none' }], { duration: 450 });
+    if (wasHidden) scheduleLayout();
+  }
+
+  function coachModeChanged() {
+    if (!coachOn()) { $('#coachRail').hidden = true; scheduleLayout(); return; }
+    coachSay(coachMode() === 'guide'
+      ? 'Guide mode: I will explain the best play before each decision and highlight its button.'
+      : 'Feedback mode: make your own decisions and I will tell you how each one compares with basic strategy.');
+    if (S.pending) showCoachForDecision(S.pending);
+  }
+
+  function coachBetting() {
+    if (!coachOn()) return;
+    const P = T.Progress;
+    if (!P.data.seenIntro) {
+      coachSay('Welcome to the table! Tap a chip to place it on the glowing circle, then press <b>Deal</b>. I will talk you through every decision. New to the game? The <b>Academy</b> (cap icon, top right) teaches it step by step.', { label: 'Coach', tone: 'tip' });
+      return;
+    }
+    if (coach.n >= 4 && coachMode() === 'feedback') {
+      const pct = Math.round((coach.ok / coach.n) * 100);
+      coachSay(`This session: <b>${coach.ok} of ${coach.n}</b> decisions matched basic strategy (${pct}%).${coach.streak >= 3 ? ` Current streak: ${coach.streak}.` : ''} ${T.BET_TIPS[coach.tip++ % T.BET_TIPS.length]}`, { label: 'Between hands' });
+      return;
+    }
+    coachSay(T.BET_TIPS[coach.tip++ % T.BET_TIPS.length], { label: 'Tip' });
+  }
+
+  function coachOnDeal(players) {
+    coach.mistakes.clear();
+    if (!coachOn()) return;
+    T.Progress.data.seenIntro = true;
+    T.Progress.save();
+    const big = players.find(s => s.type === 'human' && s.bets.main > 0.12 * (s.bankroll + s.bets.main + s.bets.pp + s.bets.t3));
+    if (big && !coach.warnedBet) {
+      coach.warnedBet = true;
+      const pct = Math.round((big.bets.main / (big.bankroll + big.bets.main + big.bets.pp + big.bets.t3)) * 100);
+      coachSay(`That bet is ${pct}% of ${esc(possessive(big.name).toLowerCase() === 'your' ? 'your' : possessive(big.name))} bankroll. Many players keep each bet to 1–5% so one bad run cannot end the session.`, { tone: 'warn', label: 'Bet size' });
+    } else if (guiding()) {
+      coachSay('Watch the dealer\u2019s face-up card. It decides most of your plays: 2–6 are weak for the dealer, 7–Ace are strong.', { label: 'Dealing', low: true });
+    }
+  }
+
+  function insuranceAdvice(natural) {
+    const tc = S.shoe ? S.count / S.shoe.decksRemaining : 0;
+    const take = !!rules().showCount && tc >= 3;
+    if (take) return { take, text: `The true count is ${tc >= 0 ? '+' : ''}${tc.toFixed(1)}. With this many 10s left, the dealer has Blackjack often enough that insurance becomes a good bet. <b>Take it.</b>` };
+    return {
+      take,
+      text: natural
+        ? '<b>Decline even money.</b> It is the same bet as insurance. If you decline, you are paid 3 to 2 unless the dealer also has Blackjack, which wins more over time.'
+        : '<b>Decline insurance.</b> It is a side bet that the hidden card is worth 10. That happens about 4 times in 13, but it only pays 2 to 1, so it loses money over time.',
+    };
+  }
+
+  function showCoachForDecision(p) {
+    if (!coachOn()) return;
+    const up = S.dealer.cards[0];
+    const ex = T.explain(p.hand.cards, up, rules(), p.best);
+    const label = humans().length > 1 ? `${possessive(p.seat.name)} move` : 'Your move';
+    if (guiding()) {
+      coachSay(`<b>${ex.headline}.</b> ${ex.why}`, { detail: ex.detail + dealerRuleNote(), label, withNote: true });
+    } else if (coach.note) {
+      coachSay(`Now: ${esc(BJ.describeHand(p.hand.cards))} against ${upName(up)}. What\u2019s the best play?`, { label, tone: 'ask', withNote: true });
+    } else if (!p.hand.coachAsked) {
+      p.hand.coachAsked = true;
+      coachSay(`${cap(BJ.describeHand(p.hand.cards))} against ${upName(up)}. What\u2019s the best play? Press <b>Hint</b> if you\u2019re unsure.`, { label, tone: 'ask' });
+    }
+  }
+
+  function dealerRuleNote() {
+    return ` The dealer must hit until 17${rules().h17 ? ' and also hits soft 17' : ' and stands on every 17'}.`;
+  }
+
+  function coachDecision(seat, hand, action, best) {
+    const key = T.situationKey(hand.cards, S.dealer.cards[0]);
+    const correct = action === best;
+    T.Progress.recordDecision(key, correct, action, best, 'game');
+    coach.n += 1;
+    if (correct) {
+      coach.ok += 1;
+      coach.streak += 1;
+      T.Progress.addXP(2);
+    } else {
+      coach.streak = 0;
+      const list = coach.mistakes.get(seat.id) || [];
+      list.push({ key, action, best });
+      coach.mistakes.set(seat.id, list);
+    }
+    if (!coachOn()) return;
+    const up = S.dealer.cards[0];
+    const ex = T.explain(hand.cards, up, rules(), best);
+    if (correct) {
+      const milestone = [5, 10, 25, 50, 100].includes(coach.streak) ? ` That\u2019s ${coach.streak} correct in a row!` : '';
+      coach.note = `\u2713 ${T.ACTION[action]} was right.${milestone}`;
+      if (coachMode() === 'feedback') coachSay(`<b>Correct.</b> ${ex.headline}. ${ex.why}${milestone}`, { tone: 'good', detail: ex.detail, label: 'Nice', hold: 2500 });
+      else if (milestone) coachSay(`<b>Correct.</b>${milestone}`, { tone: 'good', label: 'Nice' });
+    } else {
+      coach.note = `\u2717 ${T.ACTION[action]} was a mistake; ${T.ACTION[best].toLowerCase()} was better.`;
+      coachSay(`<b>${T.ACTION[action]} isn\u2019t the best play here.</b> Basic strategy says ${T.ACTION[best].toLowerCase()}: ${ex.why}`, { tone: 'bad', detail: ex.detail, label: 'Learn from this', practice: key });
+    }
+  }
+
+  function coachCpu(seat, hand, action, best) {
+    if (!guiding()) return;
+    const up = S.dealer.cards[0];
+    const desc = BJ.describeHand(hand.cards);
+    const verbs = { H: 'hits', S: 'stands', D: 'doubles', P: 'splits', R: 'surrenders' };
+    if (action === best) {
+      const ex = T.explain(hand.cards, up, rules(), best);
+      coachSay(`<b>${esc(seat.name)} ${verbs[action]}</b> on ${esc(desc)} against ${upName(up)}. ${ex.why}`, { label: 'Watch and learn', low: true });
+    } else {
+      coachSay(`<b>${esc(seat.name)} ${verbs[action]}</b> on ${esc(desc)} against ${upName(up)}, but basic strategy ${verbs[best].replace(/s$/, '')}s. Casual players make mistakes like this; the house edge thanks them.`, { label: 'Watch and learn', tone: 'warn', low: true });
+    }
+  }
+
+  function coachDealer() {
+    if (!guiding()) return;
+    coachSay(`The dealer turns over the hidden card. The dealer has no choices: they hit until 17${rules().h17 ? ', including soft 17' : ''}.`, { label: 'Dealer\u2019s turn', low: true });
+  }
+
+  function coachRecap(players) {
+    if (!coachOn()) return;
+    const hs = players.filter(s => s.type === 'human');
+    if (!hs.length) return;
+    const d = BJ.evaluate(S.dealer.cards);
+    const dealerBJ = BJ.isNatural(S.dealer.cards);
+    const session = coach.n ? ` Session: ${coach.ok}/${coach.n} correct (${Math.round((coach.ok / coach.n) * 100)}%).` : '';
+    coach.note = '';
+    if (hs.length > 1) {
+      const parts = hs.map(s => {
+        const m = coach.mistakes.get(s.id) || [];
+        return `<b>${esc(s.name)}</b> ${m.length ? `${m.length} mistake${m.length > 1 ? 's' : ''} (${esc(T.keyLabel(m[0].key))}: ${T.ACTION[m[0].best].toLowerCase()})` : 'played perfectly'}`;
+      });
+      const first = hs.map(s => (coach.mistakes.get(s.id) || [])[0]).find(Boolean);
+      coachSay(parts.join(' · ') + '.' + session, { label: 'Hand review', tone: first ? 'warn' : 'good', practice: first && first.key });
+      return;
+    }
+    const s = hs[0];
+    const m = coach.mistakes.get(s.id) || [];
+    const net = s.roundNet || 0;
+    const blackjack = s.hands.some(hd => hd.result === 'blackjack');
+    let msg;
+    let tone = 'tip';
+    if (m.length) {
+      tone = 'warn';
+      msg = `${m.length === 1 ? 'One play' : m.length + ' plays'} differed from basic strategy: ${m.map(x => `${esc(T.keyLabel(x.key))} is a <b>${T.ACTION[x.best].toLowerCase()}</b>`).join('; ')}.`;
+    } else if (blackjack) {
+      tone = 'good';
+      msg = `Blackjack! It pays ${rules().bjPayout === 1.2 ? '6 to 5' : '3 to 2'}, which is a big part of why the game is close to even when you play well.`;
+    } else if (net > 0 && d.bust && S.dealer.cards.length > 2) {
+      tone = 'good';
+      msg = `The dealer had to keep drawing and busted with ${d.total}. This is why you stand on stiff hands against weak up cards.`;
+    } else if (net > 0) {
+      tone = 'good';
+      msg = 'Well played: every decision matched basic strategy and it paid off.';
+    } else if (net < 0) {
+      msg = dealerBJ
+        ? 'The dealer had Blackjack, so nothing you could do would change this hand. That is part of the game.'
+        : 'You played it perfectly and still lost. That is normal: correct play wins over many hands, not every hand.';
+    } else {
+      msg = 'A push: you tied the dealer and keep your bet.';
+    }
+    coachSay(msg + session, { label: 'Hand review', tone, practice: m[0] && m[0].key });
+  }
+
   async function startBetting() {
     S.phase = 'betting';
     S.pending = null;
@@ -1095,6 +1296,7 @@
       const sub = hs.length > 1 ? 'Tap a seat to bet for that player, then Deal' : 'Choose chips, then press Deal';
       banner('Place your bets', sub);
     } else banner('Place your bets');
+    coachBetting();
     const round = S.round;
     for (const s of S.seats) {
       if (s.type !== 'cpu') continue;
@@ -1150,6 +1352,7 @@
     renderDock();
     S.dealer.cards = [];
     layoutHand(S.dealer, true);
+    coachOnDeal(players);
 
     try {
       await playRound(players);
@@ -1343,18 +1546,31 @@
       $('#insYesLabel').textContent = natural ? 'Even money' : 'Insure';
       showPanel('insurance');
       renderDock();
-      if (rules().autoHints || rules().coach) {
-        // Basic strategy never takes insurance.
-        $('#btnInsNo').classList.toggle('suggest', !!rules().autoHints);
-      }
+      const advice = insuranceAdvice(natural);
+      const bestBtn = advice.take ? '#btnInsYes' : '#btnInsNo';
+      if (rules().autoHints || guiding()) $(bestBtn).classList.add('suggest');
+      if (guiding()) coachSay(advice.text, { label: natural ? 'Even money?' : 'Insurance?' });
+      else if (coachOn()) coachSay(natural ? 'The dealer shows an Ace and you have Blackjack. Even money or not?' : 'The dealer shows an Ace. Do you insure?', { label: 'Insurance?', tone: 'ask' });
       S.insurancePending = v => {
         S.insurancePending = null;
         $('#btnInsNo').classList.remove('suggest');
+        $('#btnInsYes').classList.remove('suggest');
         clearActive();
         if (seat.type === 'human') {
+          const correct = v === advice.take;
           seat.stats.decisions += 1;
-          if (!v) seat.stats.correct += 1;
-          else if (rules().coach) toast('Basic strategy never takes insurance — it only pays when the count is high.', { type: 'coach' });
+          if (correct) seat.stats.correct += 1;
+          T.Progress.recordInsurance(correct);
+          coach.n += 1;
+          if (correct) { coach.ok += 1; coach.streak += 1; T.Progress.addXP(2); }
+          else coach.streak = 0;
+          coach.note = correct
+            ? `\u2713 ${v ? 'Taking' : 'Declining'} ${natural ? 'even money' : 'insurance'} was right.`
+            : `\u2717 ${v ? 'Taking' : 'Declining'} ${natural ? 'even money' : 'insurance'} was a mistake.`;
+          if (coachOn()) {
+            if (correct) coachSay(`<b>Good call.</b> ${advice.text.replace(/<b>[^<]*<\/b>\s*/, '')}`, { tone: 'good', label: 'Nice' });
+            else coachSay(`<b>Not the best choice.</b> ${advice.text.replace(/<b>[^<]*<\/b>\s*/, '')}`, { tone: 'bad', label: 'Learn from this' });
+          }
         }
         resolve(v);
       };
@@ -1515,7 +1731,8 @@
       });
       $('#btnHint').hidden = !rules().hintsEnabled;
       showPanel('play');
-      if (rules().autoHints) showHint(true);
+      if (rules().autoHints || guiding()) showHint(true);
+      showCoachForDecision(S.pending);
       const up = S.dealer.cards[0];
       const multi = S.seats.filter(s => s.hands.length).length > 1 || seat.hands.length > 1;
       const handNo = `hand ${seat.hands.indexOf(hand) + 1} of ${seat.hands.length}`;
@@ -1547,17 +1764,17 @@
     $$('#panelPlay [data-action]').forEach(b => b.classList.toggle('suggest', b.dataset.action === p.best));
     if (!silent) {
       const up = S.dealer.cards[0];
-      toast(`Basic strategy: <b>${BJ.ACTION_NAMES[p.best]}</b> with ${esc(BJ.describeHand(p.hand.cards))} against ${upName(up)}.`, { icon: 'bulb' });
+      const ex = T.explain(p.hand.cards, up, rules(), p.best);
+      p.hinted = true;
+      if (coachOn()) coachSay(`<b>${ex.headline}.</b> ${ex.why}`, { detail: ex.detail + dealerRuleNote(), label: 'Hint' });
+      else toast(`Basic strategy: <b>${BJ.ACTION_NAMES[p.best]}</b> with ${esc(BJ.describeHand(p.hand.cards))} against ${upName(up)}.`, { icon: 'bulb' });
     }
   }
 
   function recordDecision(seat, hand, action, best) {
     seat.stats.decisions += 1;
-    if (action === best) { seat.stats.correct += 1; return; }
-    if (rules().coach) {
-      const up = S.dealer.cards[0];
-      toast(`Basic strategy would <b>${BJ.ACTION_NAMES[best]}</b> here (${esc(BJ.describeHand(hand.cards))} vs ${upName(up)}).`, { type: 'coach', icon: 'bulb', ms: 4200 });
-    }
+    if (action === best) seat.stats.correct += 1;
+    coachDecision(seat, hand, action, best);
   }
 
   async function cpuAction(seat, hand, acts, best) {
@@ -1577,6 +1794,7 @@
       else if (a === 'S' && v.total <= 16 && !v.soft) a = 'H';
       if (!acts.has(a)) a = best;
     }
+    coachCpu(seat, hand, a, best);
     return a;
   }
 
@@ -1585,6 +1803,7 @@
     showPanel('wait', '<span class="thinking"><i></i><i></i><i></i></span> Dealer’s turn');
     banner('Dealer’s turn');
     const hole = S.dealer.cards[1];
+    coachDealer();
     revealCard(hole);
     updateDealerTotal();
     await wait(650);
@@ -1687,6 +1906,7 @@
       const parts = players.map(s => `${s.name} ${money(roundNet(s), { plus: true })}`);
       banner('Hand complete', parts.join(' · '));
     }
+    coachRecap(players);
     saveGame();
     showPanel('wait', `<button class="ctl lit" id="btnNext" style="flex-direction:row;gap:8px;height:44px;padding:0 18px">${icon('play')}<span>Next hand</span></button>`);
     const next = $('#btnNext');
@@ -1860,6 +2080,7 @@
         : [{ id: uid('s'), name: 'You', type: 'human', skill: 'pro', color: AVATAR_COLORS[0] }],
       bankroll: S.settings.bankroll,
       limits: S.settings.limits,
+      coachMode: S.settings.coachMode || 'guide',
       resume: !!source,
       saved,
     };
@@ -1929,6 +2150,12 @@
       });
     };
     seg($('#segBankroll'), BANKROLLS.map(b => [b, money(b)]), draft.bankroll, v => { draft.bankroll = v; });
+    seg($('#segCoach'), [['guide', 'Guide me'], ['feedback', 'Feedback'], ['off', 'Off']], draft.coachMode, v => { draft.coachMode = v; });
+    $('#coachNote').textContent = {
+      guide: 'New to blackjack? The coach explains every decision before you make it.',
+      feedback: 'Know the rules? Decide for yourself and the coach reviews each choice.',
+      off: 'No coaching. You can still use the Hint button.',
+    }[draft.coachMode];
     seg($('#segLimits'), Object.entries(LIMITS).map(([k, L]) => [k, `${money(L.min)}–${L.max >= 1000 ? L.max / 1000 + 'K' : L.max}`]), draft.limits, v => { draft.limits = v; });
 
     const resuming = draft.resume;
@@ -1961,6 +2188,7 @@
     const limitsChanged = S.settings.limits !== draft.limits;
     S.settings.limits = draft.limits;
     S.settings.bankroll = draft.bankroll;
+    S.settings.coachMode = draft.coachMode;
     saveSettings();
     const live = new Map(S.seats.map(s => [s.id, s]));
     const saved = new Map(((draft.saved && draft.saved.seats) || []).map(s => [s.id, s]));
@@ -2015,8 +2243,8 @@
       b.addEventListener('click', () => { sheetState.tab = k; $$('button', tabs).forEach(x => x.classList.toggle('on', x === b)); renderSheet(); });
       tabs.appendChild(b);
     });
-    renderSheet();
     dom.sheet.hidden = false;
+    renderSheet();
   }
 
   function closeSheet() { dom.sheet.hidden = true; sheetState = null; }
@@ -2047,8 +2275,8 @@
   const PLAY_FIELDS = [
     { key: 'speed', label: 'Dealing speed', type: 'seg', options: [['relaxed', 'Relaxed'], ['normal', 'Normal'], ['fast', 'Fast'], ['turbo', 'Turbo']] },
     { key: 'hintsEnabled', label: 'Hint button', desc: 'Show a button that reveals the basic-strategy play.', type: 'switch' },
-    { key: 'autoHints', label: 'Always highlight the best play', type: 'switch' },
-    { key: 'coach', label: 'Strategy coach', desc: 'Tell me when a decision differs from basic strategy.', type: 'switch' },
+    { key: 'coachMode', label: 'Coach', desc: 'Guide explains every decision before you make it. Feedback lets you decide, then tells you how you did.', type: 'seg', options: [['guide', 'Guide me'], ['feedback', 'Feedback'], ['off', 'Off']] },
+    { key: 'autoHints', label: 'Always highlight the best play', desc: 'The coach does this automatically in Guide mode.', type: 'switch' },
     { key: 'showCount', label: 'Card counting trainer', desc: 'Show the Hi-Lo running count and true count.', type: 'switch' },
     { key: 'showTotals', label: 'Show hand totals', type: 'switch' },
     { key: 'sound', label: 'Sound effects', type: 'switch' },
@@ -2151,6 +2379,7 @@
     }
     if (key === 'hintsEnabled') $('#btnHint').hidden = !value;
     if (key === 'autoHints' && S.pending) { if (value) showHint(true); else $$('#panelPlay [data-action]').forEach(b => b.classList.remove('suggest')); }
+    if (key === 'coachMode') coachModeChanged();
     if (key === 'sideBets' && !value) {
       S.seats.forEach(s => {
         const back = s.bets.pp + s.bets.t3;
@@ -2225,6 +2454,8 @@
     const tbl = h('div', 'table-scroll', `<table class="stats-table"><thead><tr><th>Player</th><th>Hands</th><th>Win %</th><th>BJs</th><th>Busts</th><th>Accuracy</th><th>Bankroll</th><th>Net</th></tr></thead><tbody>${rows}</tbody></table>`);
     body.appendChild(tbl);
 
+    body.appendChild(coachReport());
+
     const reset = h('div', 'row', '<div class="row-label"><strong>Reset statistics</strong><span>Clears history for every player. Bankrolls are kept.</span></div>');
     const rb = h('button', 'ghost', `${icon('refresh')}Reset`);
     rb.addEventListener('click', () => confirmClick(rb, 'Click again to reset', () => {
@@ -2235,6 +2466,35 @@
     reset.appendChild(rb);
     reset.style.marginTop = '12px';
     body.appendChild(reset);
+  }
+
+  function coachReport() {
+    const P = T.Progress;
+    const c = P.data.coach;
+    const box = h('div', 'coach-report');
+    const cats = [['hard', 'Hard totals'], ['soft', 'Soft totals'], ['pair', 'Pairs'], ['insurance', 'Insurance']];
+    const bars = cats.map(([k, label]) => {
+      const b = c.byCat[k];
+      const pct = b && b.n ? Math.round((b.ok / b.n) * 100) : null;
+      const tone = pct == null ? '' : pct >= 90 ? 'good' : pct >= 75 ? 'mid' : 'low';
+      return `<div class="acc-row"><span>${label}</span><div class="acc-bar ${tone}"><i style="width:${pct || 0}%"></i></div><b>${pct == null ? '—' : pct + '%'}</b><small>${b ? b.n : 0}</small></div>`;
+    }).join('');
+    const leaks = P.leaks(5);
+    const leakRows = leaks.length
+      ? leaks.map(l => `<li><span>${esc(l.label)}</span><span class="leak-fix">${T.ACTION[l.best]}</span><span class="leak-n">${Math.ceil(l.wrong)}\u00d7 wrong</span><button class="ghost small" data-academy="mistakes">Practise</button></li>`).join('')
+      : '<li class="empty">No repeat mistakes yet. Keep playing with the coach on and they will show up here.</li>';
+    const r = P.rank();
+    box.innerHTML = `
+      <div class="coach-report-head">
+        <h3>Coach report</h3>
+        <span class="rank-chip">${esc(r.name)} · ${r.xp} XP</span>
+      </div>
+      <p class="hint-text">All human players on this device. ${c.decisions ? `${c.correct} of ${c.decisions} table decisions matched basic strategy.` : 'Play a few hands to build your report.'}</p>
+      <div class="acc-grid">${bars}</div>
+      <h3>Situations to work on</h3>
+      <ul class="leaks">${leakRows}</ul>
+      <button class="primary" data-academy="home">Open the Academy</button>`;
+    return box;
   }
 
   function bankrollChart(seats, focusId, width) {
@@ -2267,6 +2527,30 @@
     return h('div', '', svg);
   }
 
+  function strategyChartHTML(st, only) {
+    const ups = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'A'];
+    const head = '<tr><th></th>' + ups.map(u => `<th>${u}</th>`).join('') + '</tr>';
+    const row = (label, kind, v) => `<tr><th class="rowh">${label}</th>` + ups.map(u => {
+      const c = BJ.chartCell(kind, v, u, st);
+      const txt = { H: 'H', S: 'S', Dh: 'D', Ds: 'Ds', P: 'P', Rh: 'R', Rs: 'Rs', Rp: 'Rp', D: 'D' }[c] || c;
+      return `<td class="${c}">${txt}</td>`;
+    }).join('') + '</tr>';
+    let hard = '', soft = '', pairs = '';
+    for (let v = 17; v >= 8; v--) hard += row(v === 17 ? '17+' : v === 8 ? '5–8' : String(v), 'hard', v);
+    for (let v = 20; v >= 13; v--) soft += row('A,' + (v - 11), 'soft', v);
+    [1, 10, 9, 8, 7, 6, 5, 4, 3, 2].forEach(v => { pairs += row(v === 1 ? 'A,A' : v === 10 ? '10,10' : v + ',' + v, 'pair', v); });
+    const key = `<div class="strat-key">
+        <span><i style="background:#f2f0ea">H</i>Hit</span><span><i style="background:#f0c541">S</i>Stand</span>
+        <span><i style="background:#61c38f">D</i>Double, else hit</span><span><i style="background:#61c38f">Ds</i>Double, else stand</span>
+        <span><i style="background:#74a7f0">P</i>Split</span><span><i style="background:#e07b7b">R</i>Surrender, else hit</span>
+      </div>`;
+    const t = (title, rows) => `<div><h3>${title}</h3><div class="chart-wrap"><table class="strat">${head}${rows}</table></div></div>`;
+    if (only === 'hard') return key + t('Hard totals', hard);
+    if (only === 'soft') return key + t('Soft totals', soft);
+    if (only === 'pair') return key + t('Pairs', pairs);
+    return `${key}<div class="strat-tables">${t('Hard totals', hard)}<div>${t('Soft totals', soft)}${t('Pairs', pairs)}</div></div>`;
+  }
+
   function renderHelp(body, tab) {
     const st = S.settings;
     if (tab === 'how') {
@@ -2283,32 +2567,12 @@
           ${st.insurance ? '<li><strong>Insurance</strong> — when the dealer shows an Ace, bet half your stake that they have Blackjack (pays 2 to 1). With a Blackjack of your own this becomes <em>even money</em>.</li>' : ''}
         </ul>
         <p><strong>The dealer</strong> ${st.h17 ? 'hits soft 17 and stands on hard 17 or more' : 'stands on every 17'}. When the cut card appears the round finishes and the shoe is reshuffled.</p>
-        <p><strong>Learning tools:</strong> the Hint button (or <kbd class="k">G</kbd>) shows the basic-strategy play, the coach flags decisions that differ from it, and the counting trainer shows the Hi-Lo count. Turn these on or off in Settings → Gameplay.</p>
+        <p><strong>Learning tools:</strong> the <a href="#" class="link" data-academy="home">Academy</a> teaches the game from scratch with lessons, quizzes and drills. At the table, the coach explains decisions (Guide mode) or reviews them (Feedback mode), the Hint button (or <kbd class="k">G</kbd>) shows the basic-strategy play, and the counting trainer shows the Hi-Lo count. Change these in Settings → Gameplay.</p>
       </div>`;
     } else if (tab === 'chart') {
-      const ups = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'A'];
-      const head = '<tr><th></th>' + ups.map(u => `<th>${u}</th>`).join('') + '</tr>';
-      const row = (label, kind, v) => `<tr><th class="rowh">${label}</th>` + ups.map(u => {
-        const c = BJ.chartCell(kind, v, u, st);
-        const txt = { H: 'H', S: 'S', Dh: 'D', Ds: 'Ds', P: 'P', Rh: 'R', Rs: 'Rs', Rp: 'Rp', D: 'D' }[c] || c;
-        return `<td class="${c}">${txt}</td>`;
-      }).join('') + '</tr>';
-      let hard = '', soft = '', pairs = '';
-      for (let v = 17; v >= 8; v--) hard += row(v === 17 ? '17+' : v === 8 ? '5–8' : String(v), 'hard', v);
-      for (let v = 20; v >= 13; v--) soft += row('A,' + (v - 11), 'soft', v);
-      [1, 10, 9, 8, 7, 6, 5, 4, 3, 2].forEach(v => { pairs += row(v === 1 ? 'A,A' : v === 10 ? '10,10' : v + ',' + v, 'pair', v); });
       body.innerHTML = `
-        <p class="prose" style="margin-top:14px">Basic strategy for the current rules (${st.decks} deck${st.decks > 1 ? 's' : ''}, ${st.h17 ? 'dealer hits soft 17' : 'dealer stands on soft 17'}${st.das ? ', double after split' : ''}${st.surrender ? ', late surrender' : ''}). Columns are the dealer's up card.</p>
-        <div class="strat-key">
-          <span><i style="background:#f2f0ea">H</i>Hit</span><span><i style="background:#f0c541">S</i>Stand</span>
-          <span><i style="background:#61c38f">D</i>Double, else hit</span><span><i style="background:#61c38f">Ds</i>Double, else stand</span>
-          <span><i style="background:#74a7f0">P</i>Split</span><span><i style="background:#e07b7b">R</i>Surrender, else hit</span>
-        </div>
-        <div class="strat-tables">
-          <div><h3>Hard totals</h3><div class="chart-wrap"><table class="strat">${head}${hard}</table></div></div>
-          <div><h3>Soft totals</h3><div class="chart-wrap"><table class="strat">${head}${soft}</table></div>
-               <h3>Pairs</h3><div class="chart-wrap"><table class="strat">${head}${pairs}</table></div></div>
-        </div>`;
+        <p class="prose" style="margin-top:14px">Basic strategy for the current rules (${st.decks} deck${st.decks > 1 ? 's' : ''}, ${st.h17 ? 'dealer hits soft 17' : 'dealer stands on soft 17'}${st.das ? ', double after split' : ''}${st.surrender ? ', late surrender' : ''}). Columns are the dealer's up card. Practise it in the <a href="#" class="link" data-academy="strategy">Academy strategy trainer</a>.</p>
+        ${strategyChartHTML(st)}`;
     } else if (tab === 'pay') {
       body.innerHTML = `<div class="pay-grid">
         <div><h3>Main game</h3><table class="paytable">
@@ -2357,6 +2621,25 @@
     $('#btnInsYes').addEventListener('click', () => S.insurancePending && S.insurancePending(true));
     $('#btnInsNo').addEventListener('click', () => S.insurancePending && S.insurancePending(false));
     $('#btnLobby').addEventListener('click', () => openLobby(false));
+    $('#btnAcademy').addEventListener('click', () => openAcademy('home'));
+    $('#lobbyAcademy').addEventListener('click', () => openAcademy('home'));
+    $('#coachWhy').addEventListener('click', () => {
+      const more = $('#coachMore');
+      more.hidden = !more.hidden;
+      $('#coachWhy').setAttribute('aria-expanded', String(!more.hidden));
+      $('#coachWhyLabel').textContent = more.hidden ? 'Why?' : 'Less';
+      scheduleLayout();
+    });
+    $('#coachPractice').addEventListener('click', () => openAcademy('mistakes', $('#coachPractice').dataset.key));
+    $('#coachSettings').addEventListener('click', () => openSheet('settings', 'play'));
+    document.addEventListener('click', e => {
+      const a = e.target.closest('[data-academy]');
+      if (!a) return;
+      e.preventDefault();
+      closeSheet();
+      openAcademy(a.dataset.academy);
+    });
+    if (window.ResizeObserver) new ResizeObserver(scheduleLayout).observe($('#dock'));
     $('#btnStats').addEventListener('click', () => openSheet('stats'));
     $('#btnHelp').addEventListener('click', () => openSheet('help'));
     $('#btnSettings').addEventListener('click', () => openSheet('settings'));
@@ -2387,6 +2670,7 @@
       if (e.key === 'Enter' && !dom.lobby.hidden) { e.preventDefault(); startFromLobby(false); }
       return;
     }
+    if (window.Academy && window.Academy.isOpen()) return;
     if (!dom.sheet.hidden) { if (e.key === 'Escape') closeSheet(); return; }
     if (!dom.lobby.hidden) {
       if (e.key === 'Escape' && S.seats.length) dom.lobby.hidden = true;
@@ -2454,6 +2738,22 @@
     openLobby(true);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleLayout);
   }
+
+  function openAcademy(view, key) {
+    if (!window.Academy) return;
+    if (S.pending || S.insurancePending) { /* the hand waits while you study */ }
+    window.Academy.open(view, key);
+  }
+
+  // Interface the Academy uses to draw cards and read the table rules.
+  window.BJUI = {
+    staticCard,
+    money,
+    toast,
+    rules: () => S.settings,
+    chart: strategyChartHTML,
+    onClose: () => { renderDock(); if (S.phase === 'betting' && coachOn()) coachBetting(); },
+  };
 
   // Expose a tiny debug/test surface.
   window.__bj = { S, deal, act, rebet, startFromLobby: f => startFromLobby(f), layout, setSetting };
