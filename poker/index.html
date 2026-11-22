@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0e13">
+  <meta name="color-scheme" content="dark">
+  <title>Felt Hold'em</title>
+  <meta name="description" content="Texas Hold'em poker with smart opponents, a live coach and a poker academy.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='10' y='6' width='40' height='54' rx='6' fill='%23f6f1e6' transform='rotate(-10 30 33)'/%3E%3Cpath d='M32 20c-6 8-12 11-12 17a6 6 0 0 0 10 4l-2 7h8l-2-7a6 6 0 0 0 10-4c0-6-6-9-12-17z' fill='%23111'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- ============ HOME ============ -->
+    <section id="screen-home" class="screen active" aria-label="Home">
+      <div class="home-bg" aria-hidden="true">
+      </div>
+      <header class="home-top">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">♠</span><span>Felt</span><em>Hold'em</em></div>
+        <button class="profile-chip" id="profileChip" type="button" aria-label="Edit profile">
+          <span class="avatar sm" id="profileAvatar"></span>
+          <span class="profile-text"><b id="profileName">Player</b><small id="profileRank">Rookie</small></span>
+        </button>
+      </header>
+      <div class="home-main">
+        <div class="home-hero">
+          <div class="fan" aria-hidden="true">
+            <div class="fan-card" style="--r:-24deg;--d:0" data-card="Ts"></div>
+            <div class="fan-card" style="--r:-12deg;--d:1" data-card="Js"></div>
+            <div class="fan-card" style="--r:0deg;--d:2" data-card="Qs"></div>
+            <div class="fan-card" style="--r:12deg;--d:3" data-card="Ks"></div>
+            <div class="fan-card" style="--r:24deg;--d:4" data-card="As"></div>
+          </div>
+          <p class="eyebrow">No-Limit Texas Hold'em</p>
+          <h1>Play sharper poker.<br><span>Learn as you play.</span></h1>
+          <p class="lede">Smart opponents with real personalities, a live coach that explains every decision, and an academy that takes you from first hand to final table.</p>
+          <div class="hero-ctas">
+            <button class="btn btn-gold btn-lg" data-action="quick-play">Quick Play</button>
+            <button class="btn btn-ghost btn-lg" data-action="open-academy">Open the Academy</button>
+          </div>
+          <div class="home-continue" id="homeContinue"></div>
+        </div>
+        <div class="mode-grid" role="list">
+          <button class="mode-card" role="listitem" data-action="setup-cash">
+            <span class="mode-icon i-cash" aria-hidden="true"></span>
+            <span class="mode-title">Cash Game</span>
+            <span class="mode-sub">Sit with 1–8 bots. Rebuy any time.</span>
+          </button>
+          <button class="mode-card" role="listitem" data-action="setup-tournament">
+            <span class="mode-icon i-trophy" aria-hidden="true"></span>
+            <span class="mode-title">Sit &amp; Go</span>
+            <span class="mode-sub">Rising blinds. Last player standing wins.</span>
+          </button>
+          <button class="mode-card" role="listitem" data-action="setup-hotseat">
+            <span class="mode-icon i-users" aria-hidden="true"></span>
+            <span class="mode-title">Pass &amp; Play</span>
+            <span class="mode-sub">Friends on one device, cards kept private.</span>
+          </button>
+          <button class="mode-card" role="listitem" data-action="open-online">
+            <span class="mode-icon i-globe" aria-hidden="true"></span>
+            <span class="mode-title">Play Online</span>
+            <span class="mode-sub">Private rooms with a shareable code.</span>
+          </button>
+          <button class="mode-card" role="listitem" data-action="open-academy">
+            <span class="mode-icon i-cap" aria-hidden="true"></span>
+            <span class="mode-title">Academy</span>
+            <span class="mode-sub">Lessons, quizzes and practice drills.</span>
+          </button>
+          <button class="mode-card" role="listitem" data-action="open-stats">
+            <span class="mode-icon i-chart" aria-hidden="true"></span>
+            <span class="mode-title">Stats</span>
+            <span class="mode-sub">Your results and coach scores.</span>
+          </button>
+        </div>
+      </div>
+      <footer class="home-foot">
+        <button class="link" data-action="open-settings">Settings</button>
+        <span>·</span>
+        <button class="link" data-action="open-help">How to play</button>
+      </footer>
+    </section>
+
+    <!-- ============ TABLE ============ -->
+    <section id="screen-table" class="screen" aria-label="Poker table">
+      <header class="table-top">
+        <button class="icon-btn" data-action="leave-table" aria-label="Leave table" title="Leave table"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <div class="table-info" id="tableInfo"></div>
+        <div class="top-actions">
+          <button class="icon-btn" id="btnLog" data-action="toggle-log" aria-label="Hand history" title="Hand history (L)"><svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h9"/></svg></button>
+          <button class="icon-btn" id="btnSound" data-action="toggle-sound" aria-label="Toggle sound" title="Sound"><svg viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10H4z"/><path class="snd-wave" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg></button>
+          <button class="icon-btn" data-action="open-settings" aria-label="Settings" title="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+          <button class="coach-toggle" id="btnCoach" data-action="toggle-coach" aria-label="Toggle coach" title="Coach (H)"><span class="owl" aria-hidden="true"></span><span class="coach-toggle-label">Coach</span></button>
+        </div>
+      </header>
+      <div class="table-layout">
+        <div class="table-stage" id="tableStage">
+          <div class="table-area" id="tableArea">
+          <div class="table-wrap" id="tableWrap">
+            <div class="table-rail">
+              <div class="table-felt">
+                <div class="felt-logo" aria-hidden="true">Felt</div>
+                <div class="pot-area">
+                  <div class="pot" id="pot" aria-live="polite"></div>
+                  <div class="board" id="board"></div>
+                  <div class="banner" id="banner" role="status"></div>
+                </div>
+              </div>
+            </div>
+            <div class="seats" id="seats"></div>
+            <div class="fx-layer" id="fxLayer" aria-hidden="true"></div>
+          </div>
+          </div>
+          <div class="action-dock" id="actionDock"></div>
+        </div>
+        <aside class="coach-panel" id="coachPanel" aria-label="Coach"></aside>
+      </div>
+      <aside class="drawer" id="logDrawer" aria-label="Hand history">
+        <div class="drawer-head"><h3>Hand history</h3><button class="icon-btn" data-action="toggle-log" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+        <div class="drawer-body" id="logBody"></div>
+      </aside>
+      <div class="chat" id="chatBox" hidden></div>
+      <div class="privacy" id="privacy" hidden></div>
+    </section>
+
+    <!-- ============ ACADEMY ============ -->
+    <section id="screen-academy" class="screen" aria-label="Academy">
+      <header class="page-top">
+        <button class="icon-btn" data-action="go-home" aria-label="Back to home"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <h2 class="page-title"><span class="owl sm" aria-hidden="true"></span>Academy</h2>
+        <div class="academy-xp" id="academyXp"></div>
+      </header>
+      <div class="academy" id="academy"></div>
+    </section>
+
+    <!-- ============ STATS ============ -->
+    <section id="screen-stats" class="screen" aria-label="Statistics">
+      <header class="page-top">
+        <button class="icon-btn" data-action="go-home" aria-label="Back to home"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <h2 class="page-title">Your Stats</h2>
+        <button class="btn btn-ghost btn-sm" data-action="reset-stats">Reset</button>
+      </header>
+      <div class="stats-page" id="statsPage"></div>
+    </section>
+
+    <!-- ============ ONLINE LOBBY ============ -->
+    <section id="screen-online" class="screen" aria-label="Online lobby">
+      <header class="page-top">
+        <button class="icon-btn" data-action="go-home" aria-label="Back to home"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <h2 class="page-title">Play Online</h2>
+        <span></span>
+      </header>
+      <div class="online-page" id="onlinePage"></div>
+    </section>
+  </div>
+
+  <div class="modal-root" id="modalRoot"></div>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <div class="sr-only" id="announcer" aria-live="assertive"></div>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <script src="js/cards.js"></script>
+  <script src="js/preflop-data.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/equity.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/coach.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/sound.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/table.js"></script>
+  <script src="js/coach-panel.js"></script>
+  <script src="js/controller.js"></script>
+  <script src="js/net.js"></script>
+  <script src="js/academy-content.js"></script>
+  <script src="js/academy.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
