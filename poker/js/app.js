@@ -116,8 +116,20 @@
       this.table.attach(game);
       if (!Store.academy.seenTableTip) {
         Store.academy.seenTableTip = true; Store.save();
-        setTimeout(() => toast('<span class="owl"></span> Tip: tap a player for their stats and the coach\'s read.', 'coach', 4200), 1500);
+        this.coachIntro();
       }
+    },
+
+    coachIntro() {
+      modal(`<div class="warn-box"><span class="owl lg"></span><div><h2>Meet your coach</h2>
+        <p class="sub">I'll sit beside you and help you make the best decision every hand.</p></div></div>
+        <div class="intro-grid">
+          <div class="intro-item"><span class="ii-n">1</span><div><b>Live advice</b><span>On your turn I recommend an action, explain why, and mark it on the buttons as <em>Coach pick</em>.</span></div></div>
+          <div class="intro-item"><span class="ii-n">2</span><div><b>The maths, made simple</b><span>Your equity against each opponent's likely range, the pot odds you're getting, and your outs.</span></div></div>
+          <div class="intro-item"><span class="ii-n">3</span><div><b>Hand reviews</b><span>After each hand I grade your decisions, from <em>Great</em> to <em>Blunder</em>, and link the lesson that helps most.</span></div></div>
+          <div class="intro-item"><span class="ii-n">4</span><div><b>Your choice</b><span>Want to think for yourself first? Switch me to <em>On request</em> and press <b>H</b> when you want a hint.</span></div></div>
+        </div>
+        <div class="modal-actions"><button class="btn btn-coach" data-close>Let's play</button></div>`);
     },
 
     async leaveTable(force) {

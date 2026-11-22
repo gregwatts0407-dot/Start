@@ -1,0 +1,11 @@
+{
+  "name": "felt-holdem",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Texas Hold'em with smart bots, a live coach, an academy and online play",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": { "node": ">=18" }
+}

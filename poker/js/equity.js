@@ -283,29 +283,29 @@
     const ranks = board.map((c) => c >> 2).sort((a, b) => b - a);
     const h = hole.map((c) => c >> 2).sort((a, b) => b - a);
     const bScore = board.length >= 5 ? C.evaluate(board) : boardScoreSmall(board);
-    if (board.length >= 5 && s === bScore) return 'playing the board';
+    if (board.length >= 5 && s === bScore) return 'nothing better than the board (you are playing the board)';
     if (cat === 1) {
       const pr = (s >> 16) & 15;
       if (h[0] === h[1]) {
-        if (pr > ranks[0]) return 'overpair';
-        return pr > ranks[ranks.length - 1] ? 'underpair (middle)' : 'underpair';
+        if (pr > ranks[0]) return 'an overpair';
+        return pr > ranks[ranks.length - 1] ? 'a pocket pair below the top card' : 'a small pocket pair (below the whole board)';
       }
-      if (!h.includes(pr)) return 'board pair only';
+      if (!h.includes(pr)) return C.RANK_NAMES[h[0]].toLowerCase() + ' high (the pair is on the board)';
       const kicker = h[0] === pr ? h[1] : h[0];
-      if (pr === ranks[0]) return kicker >= 10 ? 'top pair, strong kicker' : kicker >= 7 ? 'top pair, medium kicker' : 'top pair, weak kicker';
+      if (pr === ranks[0]) return kicker >= 9 ? 'top pair, strong kicker' : kicker >= 6 ? 'top pair, medium kicker' : 'top pair, weak kicker';
       if (pr === ranks[1]) return 'middle pair';
       return 'bottom pair';
     }
     if (cat === 2) {
       if ((bScore >> 20) >= 1) {
         const usesBoth = h.every((r) => ranks.includes(r));
-        return usesBoth ? 'two pair' : h[0] === h[1] ? 'two pair (pocket pair + board pair)' : 'two pair (one from the board)';
+        return usesBoth ? 'two pair' : h[0] === h[1] ? 'two pair (your pocket pair plus the board pair)' : 'two pair (one pair is on the board)';
       }
-      return h[0] === h[1] ? 'two pair' : 'two pair';
+      return 'two pair';
     }
     if (cat === 3) return h[0] === h[1] ? 'a set' : 'trips';
-    if (cat === 0) return 'nothing yet';
-    return C.CATEGORY_NAMES[cat].toLowerCase();
+    if (cat === 0) return C.RANK_NAMES[h[0]].toLowerCase() + ' high, no pair';
+    return 'a ' + C.CATEGORY_NAMES[cat].toLowerCase().replace(/^a /, '');
   }
 
   function texture(board) {

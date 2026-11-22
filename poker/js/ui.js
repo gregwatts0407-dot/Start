@@ -54,9 +54,18 @@
     const s = c & 3;
     return `${r}<span class="suit${s === 1 || s === 2 ? ' r' : ''}">${C.SUIT_SYMBOLS[s]}</span>`;
   }
+  /** Fix third-person verbs when the player is literally called "You". */
+  const YOU_VERBS = { posts: 'post', calls: 'call', checks: 'check', bets: 'bet', raises: 'raise', folds: 'fold', shows: 'show', wins: 'win', splits: 'split', finishes: 'finish', rebuys: 'rebuy', leaves: 'leave' };
+  function youify(text) {
+    if (!/\bYou\b/.test(text)) return text;
+    return text
+      .replace(/\bYou (posts|calls|checks|bets|raises|folds|shows|wins|splits|finishes|rebuys|leaves)\b/g, (m, v) => 'You ' + YOU_VERBS[v])
+      .replace(/^(You .*)\band is all-in/, '$1and are all-in')
+      .replace(/returned to You\b/, 'returned to you');
+  }
   /** Replace "As Kd" tokens in log text with coloured glyphs. */
   function prettyCards(text) {
-    return esc(text).replace(/\b([2-9TJQKA])([shdc])\b/g, (m, r, s) => cardText(C.parseCard(r + s)));
+    return esc(youify(text)).replace(/\b([2-9TJQKA])([shdc])\b/g, (m, r, s) => cardText(C.parseCard(r + s)));
   }
 
   // ---- chips ----
@@ -123,7 +132,7 @@
     root.appendChild(back);
     modalStack.push(api);
     const first = m.querySelector('[autofocus]') || m.querySelector('button.btn-gold, input, button:not(.modal-close)');
-    if (first) setTimeout(() => first.focus(), 40);
+    if (first) setTimeout(() => first.focus({ preventScroll: true }), 40);
     return api;
   }
   function closeTopModal() {
@@ -172,5 +181,5 @@
   const pct = (x) => Math.round(x * 100) + '%';
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-  root.UI = { $, $$, esc, fmt, fmtShort, h, cardHTML, cardEl, cardsInline, cardText, prettyCards, chipStacksHTML, hueFor, initials, avatarHTML, toast, announce, modal, closeTopModal, confirmBox, confetti, pct, sleep };
+  root.UI = { $, $$, esc, fmt, fmtShort, h, cardHTML, cardEl, cardsInline, cardText, prettyCards, youify, chipStacksHTML, hueFor, initials, avatarHTML, toast, announce, modal, closeTopModal, confirmBox, confetti, pct, sleep };
 })(window);

@@ -174,6 +174,7 @@
       el.classList.toggle('out', (!s.inHand && view.street !== 'idle') || s.out);
       el.classList.toggle('busted', !!s.out);
       el.classList.toggle('clickable', !isHero);
+      el.classList.toggle('revealed', !isHero && s.inHand && !s.folded && s.cards.length > 0 && s.cards[0] >= 0);
       el.classList.toggle('empty', !!s.empty);
       void empty;
 
@@ -407,9 +408,10 @@
       // banner
       const names = (ws) => ws.map((w) => esc(view.seats[w].name)).join(' & ');
       const main = res.pots[0];
+      const wins = (ws) => (ws.length > 1 ? 'split' : view.seats[ws[0]].name === 'You' ? 'win' : 'wins');
       let text;
-      if (res.uncontested) text = `<b>${names(main.winners)}</b> wins ${fmt(main.amount)}`;
-      else if (res.pots.length === 1) text = `<b>${names(main.winners)}</b> ${main.winners.length > 1 ? 'split' : 'wins'} ${fmt(main.amount)} · ${esc(main.hand)}`;
+      if (res.uncontested) text = `<b>${names(main.winners)}</b> ${wins(main.winners)} ${fmt(main.amount)}`;
+      else if (res.pots.length === 1) text = `<b>${names(main.winners)}</b> ${wins(main.winners)} ${fmt(main.amount)} · ${esc(main.hand)}`;
       else text = res.pots.map((p, k) => `${k === 0 ? 'Main' : 'Side'}: <b>${names(p.winners)}</b> ${fmt(p.amount)}`).join(' · ');
       this.banner(text);
       void ctx;

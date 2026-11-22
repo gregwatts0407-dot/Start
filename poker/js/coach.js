@@ -45,7 +45,14 @@
     const potOdds = toCall > 0 ? toCall / (pot + toCall) : 0;
     const cls = C.handClass(s.cards[0], s.cards[1]);
     const hp = Q.handPct(s.cards[0], s.cards[1]);
-    const opponents = AI.opponentRanges(g, idx, statsBySeat);
+    let opponents = AI.opponentRanges(g, idx, statsBySeat);
+    if (g.street === 'preflop') {
+      // preflop, measure equity against players who actually entered the pot;
+      // if nobody has, against one random hand (the big blind)
+      const entered = new Set(g.actions.filter((a) => a.street === 'preflop' && (a.type === 'raise' || a.type === 'call')).map((a) => a.seat));
+      const vs = opponents.filter((o) => entered.has(o.seat));
+      opponents = vs.length ? vs : opponents.slice(0, 1).map((o) => Object.assign({}, o, { lo: 0, hi: 1, label: 'a random hand' }));
+    }
     const eff = effectiveStack(g, idx);
     const potAfter = Math.max(1, pot);
     const spr = eff / potAfter;
@@ -152,7 +159,7 @@
     const raiserRange = AI.estimateRange(g, raiser.index, null);
     if (raises.length === 1) {
       const lateRaiser = ['CO', 'BTN', 'SB'].includes(E.positionOf(g, raiser.index));
-      const valueRange = lateRaiser ? 0.06 : 0.035;
+      const valueRange = lateRaiser ? 0.07 : 0.048; // always includes AK, QQ+
       const isBB = idx === g.bbSeat;
       const ip = AI.isLastToAct(g, idx);
       let callRange = isBB ? 0.4 : ip ? 0.16 : 0.1;
@@ -226,14 +233,21 @@
     const outs = info.outs.length;
     const ip = AI.isLastToAct(g, idx);
     const aggressor = g.preflopAggressor === idx;
-    const handLine = info.relative ? `You have ${info.relative} (${info.madeName.toLowerCase()})` : `You have ${info.madeName.toLowerCase()}`;
+    const rel = info.relative;
+    const handLine = !rel ? `You have ${info.madeName.toLowerCase()}`
+      : /\(|high|board/.test(rel) || rel === info.madeName.toLowerCase() ? `You have ${rel}` : `You have ${rel} (${info.madeName.toLowerCase()})`;
     const oppLine = nOpp === 1 ? `their likely range (${out.opponents[0].label})` : `${nOpp} opponents' likely ranges`;
     out.reasons.push(`${handLine}. Your equity against ${oppLine} is about ${pct(eq)}.`);
     if (draw || info.gutshot) {
+      const og = info.outGroups;
+      const drawOuts = new Set([].concat(og.Straight || [], og.Flush || [], og['Straight Flush'] || [])).size;
+      const pairOuts = (og['Top Pair'] || []).length;
       const kinds = [info.flushDraw && (info.nutFlushDraw ? 'nut flush draw' : 'flush draw'), info.oesd && 'open-ended straight draw', info.gutshot && !info.oesd && 'gutshot'].filter(Boolean).join(' + ');
-      out.reasons.push(`Drawing: ${kinds} with ${outs} outs — about ${pct(Math.min(1, outs * (g.street === 'flop' ? 0.04 : 0.02)))} to hit by the river (rule of ${g.street === 'flop' ? 4 : 2}).`);
+      const mult = g.street === 'flop' ? 4 : 2;
+      out.reasons.push(`Drawing: ${kinds} — ${drawOuts} outs, about ${pct(Math.min(1, drawOuts * mult / 100))} to hit ${g.street === 'flop' ? 'by the river' : 'on the river'} (rule of ${mult})${pairOuts ? `. ${pairOuts} more cards would give you top pair` : ''}.`);
       out.lesson = 'outs';
     }
+    void outs;
 
     if (L.toCall > 0) {
       const need = out.potOdds;

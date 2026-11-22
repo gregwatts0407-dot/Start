@@ -42,3 +42,7 @@ Levels are drawn as text maps at the top of `platformer/game.js`, so you can edi
 # Stillness
 
 A full-stack guided meditation platform (Next.js + Supabase) in `stillness/`. See [`stillness/README.md`](stillness/README.md) for setup, demo accounts and deployment.
+
+# Felt Hold'em
+
+No-Limit Texas Hold'em in `poker/`, plain HTML, CSS and JavaScript with no build step. Play against bots with distinct personalities, in Sit & Go tournaments, pass-and-play on one device, or online in private rooms (`node poker/server.js`, no dependencies). A live coach recommends and explains every decision and reviews each hand, and an academy teaches the game through 14 lessons, quizzes and practice drills. Open `poker/index.html` to play; see [`poker/README.md`](poker/README.md) for details.

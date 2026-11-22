@@ -220,8 +220,12 @@
         else if (score >= 0.75) summary = 'Solid hand with a small leak or two.';
         else if (worst.grade.evLoss > 0) summary = `One decision cost about <b>${fmt(worst.grade.evLoss)}</b> chips in expectation. See the ${esc(worst.street)}.`;
         else summary = `Biggest lesson this hand: the ${esc(worst.street)} decision.`;
-        this.review = { handNo: v.handNo, items, score, summary, lesson: worst.grade.score < 0.9 ? worst.lesson : null };
-        if (worst.grade.score <= 0.15 && S().coachMode !== 'off') toast(`<span class="owl"></span> Coach: review hand #${v.handNo}: ${esc(worst.grade.label.toLowerCase())} on the ${esc(worst.street)}`, 'coach', 3200);
+        const hs = v.seats[hero != null ? hero : this.source.localHero];
+        this.review = {
+          handNo: v.handNo, items, score, summary, lesson: worst.grade.score < 0.9 ? worst.lesson : null,
+          cards: hs && hs.cards[0] >= 0 ? hs.cards.slice() : null, board: v.board.slice(), net: hs ? hs.stack - hs.startStack : 0,
+        };
+        if ((worst.grade.grade === 'blunder' || worst.grade.evLoss >= v.bb * 6) && S().coachMode !== 'off') toast(`<span class="owl"></span> Coach: review hand #${v.handNo}: ${esc(worst.grade.label.toLowerCase())} on the ${esc(worst.street)}`, 'coach', 3200);
       }
     }
 
@@ -359,7 +363,7 @@
             <input class="amount-input num" type="number" min="${L.minRaiseTo}" max="${L.maxRaiseTo}" value="${def}" aria-label="Raise amount"></div></div>`;
         }
       }
-      const collapsed = raiseRow && window.innerWidth <= 760 && !this.raiseOpen;
+      const collapsed = raiseRow && (window.innerWidth <= 760 || window.innerHeight <= 500) && !this.raiseOpen;
       return `<div class="dock-inner${collapsed ? ' raise-collapsed' : ''}">${raiseRow}<div class="dock-row">${btns.join('')}</div></div>`;
     }
 
@@ -696,10 +700,31 @@
       // humans: wait for input
     }
 
+    banter() {
+      const g = this.g, res = g.result;
+      if (!res || !this.screen || Math.random() > 0.45) return;
+      const LINES = {
+        win: { maniac: ['Ship it!', 'Too easy.', 'Who wants some more?'], lag: ['Thanks for the chips.', 'Pressure works.'], tag: ['Nice hand.', 'Good game.'],
+          station: ['I knew you had nothing!', 'Had to look.'], rock: ['Patience pays.', 'Waited all night for that.'], shark: ['Standard.', 'Ran good.'], novice: ['Wait, I won?!', 'Beginner\'s luck!'] },
+        lose: { maniac: ['Lucky river!', 'Next one is mine.'], lag: ['Well played.', 'Nice call.'], tag: ['Nice hand.', 'Good call.'],
+          station: ['How?!', 'I had to call…'], rock: ['Hmm.', 'Unlucky.'], shark: ['Nice hand.', 'gg'], novice: ['Ouch.', 'Oops.'] },
+      };
+      const big = res.pots.reduce((a, p) => a + p.amount, 0) >= g.bb * 30;
+      if (!big || res.uncontested) return;
+      const winner = g.seats[res.pots[0].winners[0]];
+      const losers = g.seats.filter((s) => s.inHand && !s.folded && s.isBot && !res.winnings[s.index]);
+      const speaker = winner.isBot && Math.random() < 0.6 ? winner : losers[0];
+      if (!speaker || !speaker.isBot) return;
+      const pool = (speaker === winner ? LINES.win : LINES.lose)[speaker.profile] || ['Nice hand.'];
+      const line = pool[Math.floor(Math.random() * pool.length)];
+      setTimeout(() => this.screen && this.screen.tv.emote(speaker.index, esc(line), 'seat-say'), 1200 * speed());
+    }
+
     afterHand() {
       const g = this.g;
       this.ff = false;
       const res = g.result;
+      this.banter();
       const pause = res && res.uncontested ? 1900 : 4200;
       // tournament over?
       if (g.config.mode === 'tournament') {

@@ -104,7 +104,10 @@
   function reviewCard(review) {
     if (!review || !review.items.length) return '';
     const score = Math.round(review.score * 100);
-    return `<div class="cp-card"><h4>Hand #${review.handNo} review</h4>
+    const ctx = review.cards ? `<div class="review-ctx"><span class="cards-inline">${review.cards.map((c) => cardHTML(c)).join('')}</span>
+      ${review.board.length ? `<span class="rc-sep">on</span><span class="cards-inline">${review.board.map((c) => cardHTML(c)).join('')}</span>` : ''}
+      <span class="rc-net ${review.net >= 0 ? 'pos' : 'neg'}">${review.net >= 0 ? '+' : ''}${fmt(review.net)}</span></div>` : '';
+    return `<div class="cp-card"><h4>Hand #${review.handNo} review</h4>${ctx}
       <div class="cp-score"><div class="ring" style="--p:${score}">${score}</div>
         <div class="cp-tip">${review.summary}</div></div>
       <div class="cp-review" style="margin-top:12px">${review.items.map((it) => `
@@ -122,6 +125,8 @@
     return `<div class="cp-card"><h4>This session</h4><div class="cp-score"><div class="ring" style="--p:${s}">${s}</div>
       <div class="cp-tip"><b>${session.decisions}</b> decisions graded.<br>${session.mistakes ? `<b>${session.mistakes}</b> costly mistake${session.mistakes > 1 ? 's' : ''} so far.` : 'No costly mistakes yet — nice.'}</div></div></div>`;
   }
+
+  const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
 
   function render(el, state) {
     const mode = state.mode;
@@ -149,7 +154,7 @@
           const info = root.PokerEquity.analyze(hv.cards, state.view.board);
           const cls = C.handClass(hv.cards[0], hv.cards[1]);
           body += `<div class="cp-card"><h4>Your hand</h4><div class="cards-row">${hv.cards.map((c) => cardHTML(c)).join('')}
-            <div class="cp-tip" style="margin-left:6px"><b>${esc(info.relative || info.madeName)}</b><br><span style="color:var(--muted)">${cls} · top ${Math.max(1, Math.round(root.PokerEquity.classPct(cls) * 100))}% preflop</span>
+            <div class="cp-tip" style="margin-left:6px"><b>${esc(cap(info.relative || info.madeName))}</b><br><span style="color:var(--muted)">${cls} · top ${Math.max(1, Math.round(root.PokerEquity.classPct(cls) * 100))}% preflop</span>
             ${state.view.board.length >= 3 ? `<br><span style="color:var(--muted)">${esc(info.texture.label)}</span>` : ''}</div></div></div>`;
         }
         body += readsCard(state);
